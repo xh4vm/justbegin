@@ -10,17 +10,19 @@ services:
     ports:
       - 8000:5000
     restart: always
-
+    volumes:
+      - ./app:/justbegin/app
   db:
     image: postgres:latest
+    container_name: db
     environment:
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_DB: justbegin
+        # - POSTGRES_USER=xh4vm
+        - POSTGRES_PASSWORD=xh4vm
+        # - POSTGRES_DB=justbegin
     networks:
       - default
     ports:
       - 5432:5432
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
