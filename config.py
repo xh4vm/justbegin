@@ -6,7 +6,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class BaseConfig:
     SECRET_KEY = 'gwkghkf2934ysfljb45efsjfhkadslg2'
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:xh4vm@db:5432/postgres'
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://test:test@db/test'
     # SQLALCHEMY_DATABASE_URI = 'postgresql://xh4vm:xh4vm@db:5432/justbegin'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
