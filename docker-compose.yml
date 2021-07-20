@@ -15,6 +15,7 @@ services:
     restart: always
     volumes:
       - ./app:/justbegin/app
+      - ./tests:/justbegin/tests
   db:
     image: postgres:latest
     container_name: db

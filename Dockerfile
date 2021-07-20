@@ -5,10 +5,6 @@ ENV PYTHONUNBUFFERED 1
 ENV FLASK_ENV development
 ENV FLASK_DEBUG 1
 
-ENV POSTGRES_USER xh4vm
-ENV POSTGRES_PASSWORD xh4vm
-ENV POSTGRES_DB justbegin
-
 RUN apt-get update && apt-get install -y python-pip python-dev build-essential redis postgresql postgresql-client gcc python3-dev musl-dev
 RUN pip install --upgrade pip
 
