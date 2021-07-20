@@ -33,4 +33,4 @@ jobs:
         run: docker exec -i justbegin_web_1 bash -c '/etc/init.d/redis-server restart'
         
       - name: Run Pytest
-        run: docker exec -it justbegin_web_1 pytest -vv
+        run: docker exec -i justbegin_web_1 pytest -vv
