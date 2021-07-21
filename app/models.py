@@ -2,7 +2,7 @@ from app import db, jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
-
+#commit right work check
 class User(db.Model):
     __tablename__ = "user"
 
