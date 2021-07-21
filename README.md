@@ -12,3 +12,8 @@ docker-compose up -d --build
 ```
 docker exec -it justbegin_web_1 pytest -vv
 ```
+
+## Для обновления структуры базы данных:
+```
+docker exec -it justbegin_web_1 flask db migrate && flask db upgrade
+```
