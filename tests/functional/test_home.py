@@ -18,5 +18,3 @@ class HomeTestCase(BaseTestCase):
             response = test_client.get('/home/')
             assert response.status_code == 200
             assert "путь до шаблона" in response.data.decode()
-
-    
