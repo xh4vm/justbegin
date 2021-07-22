@@ -1,3 +1,4 @@
+from enum import unique
 from app import db, jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -17,14 +18,16 @@ class User(db.Model):
     email = db.Column(db.String(128), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
     avatar = db.Column(db.String(128), nullable=True)
+    telegram_nickname = db.Column(db.String(32), nullable=False, unique=True)
 
-    def __init__(self, nickname, email, password, avatar=None, first_name=None, last_name=None):
+    def __init__(self, nickname, email, password, telegram_nickname, avatar=None, first_name=None, last_name=None):
         self.nickname = nickname
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.password = generate_password_hash(password)
         self.avatar = avatar
+        self.telegram_nickname = telegram_nickname
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
@@ -48,3 +51,4 @@ class User(db.Model):
     @jwt.user_identity_loader
     def add_identity(user):
         return user.id
+
