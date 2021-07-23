@@ -1,6 +1,17 @@
 version: '3.8'
 
 services:
+  frontend:
+    build: ./frontend
+    container_name: docker-frontend
+    command: npm run start
+    ports: 
+      - 3000:3000
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./frontend/src:/usr/src/app/src
   web:
     build: .
     environment:
