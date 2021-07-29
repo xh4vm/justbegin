@@ -10,7 +10,7 @@ docker-compose up -d --build
 
 ## Для запуска тестов:
 ```
-docker exec -it justbegin_web_1 pytest -vv
+docker exec -it justbegin_web_1 pytest -vv --cov=app/ 
 ```
 
 ## Для обновления структуры базы данных:

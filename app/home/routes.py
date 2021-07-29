@@ -7,13 +7,12 @@ from app.home.responses import HomeResponses
 
 class Home(FlaskView):
 
-    @route('/', methods=['GET'])
     @jwt_optional
-    def index_home_view(self):
+    def get(self):
         return HomeResponses.INDEX_SUCCESS, 200
 
 @bp.route('/', methods=['GET'])
 def index_view():
-    return redirect('/home/', code=302)
+    return redirect('/home/', code=303)
 
 Home.register(bp)

@@ -173,5 +173,5 @@ class Project(db.Model):
     comments = db.relationship('ProjectComment')
 
     categories = db.relationship('Category', secondary='project_category', backref=db.backref('projects'))
-    authors = db.relationship('User', secondary='project_author', backref=db.backref('projects'))
+    authors = db.relationship('User', secondary='project_creator', backref=db.backref('projects'))
     favorites = db.relationship('User', secondary='favorite_project', backref=db.backref('favorite_projects'))

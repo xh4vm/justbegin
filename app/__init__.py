@@ -20,6 +20,9 @@ def register_blueprints(app):
     from app.home import bp as home_bp
     app.register_blueprint(home_bp)
 
+    from app.auth import bp as auth_bp
+    app.register_blueprint(auth_bp)
+
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -32,7 +35,7 @@ def create_app(config_class=Config):
 
     register_blueprints(app)
 
-    app.jinja_env.globals.update(randomword=randomword)
+    app.app_context().push()
 
     return app
 
