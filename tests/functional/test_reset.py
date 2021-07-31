@@ -3,7 +3,7 @@ from tests.functional.TestAuth import TestAuth
 
 from tests.functional.base import BaseTestCase
 from app.auth.responses import AuthResponses
-from tests.functional.Header import Header
+from tests.functional.header import Header
 from tests.functional.mocks.sign_up import SignUpMeMock
 
 
