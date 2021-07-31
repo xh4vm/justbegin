@@ -28,6 +28,10 @@ class User(db.Model):
         self.avatar = avatar
         self.telegram_nickname = telegram_nickname
 
+    @staticmethod
+    def create_password_hash(password):
+        return generate_password_hash(password)
+
     def check_password(self, password):
         return check_password_hash(self.password, password)
 

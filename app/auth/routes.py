@@ -1,15 +1,19 @@
+from datetime import datetime
+from re import A
 from flask_jwt_extended.view_decorators import jwt_required
 from app import db
 from app import auth
 from app.auth import methods
 from app.decorators import already_auth, request_is_json
-from flask import render_template, request, jsonify, redirect, current_app
+from flask import json, render_template, request, jsonify, redirect, current_app
 from flask_jwt_extended import create_access_token, jwt_optional, get_jwt_identity, set_access_cookies
 from flask_classy import FlaskView, route
 from app.auth import bp
 from app.auth.methods.Authentificator import Authentificator
 from app.auth.responses import *
+from app.models import User
 import importlib
+import jwt
 
 
 class Auth(FlaskView):
@@ -58,6 +62,31 @@ class Auth(FlaskView):
         instance = self.get_auth_instance()
 
         return instance.reset_password(email=email)
+
+    @route('/reset/<token>/', methods=["GET", "POST"])
+    
+    @jwt_optional       
+    @already_auth(response=AuthResponses.ALREADY_AUTH, code=208)
+    def reset_password_view(self, token: str):
+        token_data = jwt.decode(token, current_app.config['JWT_SECRET_KEY'], algorithms=['HS256'])
+
+        if datetime.now().timestamp().__int__() > token_data['exp']:
+            return jsonify(AuthResponses.RESET_TOKENT_EXPIRED), 408
+
+        # Рендеринг страницы с вводом нового пароля
+        if request.method == "GET":
+            pass
+
+        password = request.json.get('password')
+        user = User.query.with_entities(User).filter_by(id=token_data['id'], email=token_data['email']).first()
+
+        if password is None or user is None:
+            return jsonify(AuthResponses.BAD_AUTH_DATA), 400
+
+        user.password = User.create_password_hash(password)
+        db.session.commit()
+
+        return jsonify(AuthResponses.RESET_PASSWORD_SUCCESS), 200
 
     @jwt_required
     @route('/logout/', methods=['GET'])

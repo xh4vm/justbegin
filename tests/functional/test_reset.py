@@ -1,10 +1,11 @@
+from app.auth.methods.JWTAuth import JWTAuth
 import json
 from tests.functional.TestAuth import TestAuth
-
 from tests.functional.base import BaseTestCase
 from app.auth.responses import AuthResponses
 from tests.functional.header import Header
 from tests.functional.mocks.sign_up import SignUpMeMock
+from app.models import User
 
 
 class ResetPasswordTestCase(BaseTestCase, TestAuth):
@@ -27,7 +28,7 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
             assert response.status_code == 400
             assert json.loads(response.data) == AuthResponses.UNKNOWN_USER
     
-    def test_reset_success(self):
+    def test_reset_send_mail_success(self):
 
         with self.app.test_client() as test_client:
             SignUpMeMock.init()
@@ -39,3 +40,19 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
             assert response.status_code == 201
             assert json.loads(response.data) == AuthResponses.TOKEN_CREATED
 
+    def test_reset_password_success_jwt(self):
+
+        with self.app.test_client() as test_client:
+            SignUpMeMock.init()
+
+            user = User.query.with_entities(User).filter_by(email=SignUpMeMock.email).first()
+            token = JWTAuth.get_token(user)
+            new_password = 'new_password'
+
+            response = test_client.post(f'/auth/reset/{token}/', data=json.dumps({
+                'password': new_password,
+            }), headers=Header.json)
+
+            assert response.status_code == 200
+            assert json.loads(response.data) == AuthResponses.RESET_PASSWORD_SUCCESS
+            assert user.check_password(new_password) is True

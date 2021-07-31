@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from flask import make_response, jsonify, redirect
 from flask.globals import current_app
 from app import db, mail
@@ -6,10 +7,11 @@ from app.auth.responses import AuthResponses
 from flask_jwt_extended import create_access_token, set_access_cookies, unset_jwt_cookies
 from app.auth.methods import IAuth
 from flask_mail import Message
+import jwt
 
 
 class JWTAuth(IAuth):
-    def sign_in(self, email, password):
+    def sign_in(self, email: str, password: str) -> object:
         user = User.query.with_entities(User).filter_by(email=email).first()
 
         if user is None or not user.check_password(password):
@@ -22,7 +24,7 @@ class JWTAuth(IAuth):
 
         return response
 
-    def sign_up(self, data):
+    def sign_up(self, data: object) -> object:
         if data.get('password') != data.get('confirm_password'):
             return jsonify(AuthResponses.BAD_CONFIRM_PASSWORD), 400
 
@@ -43,11 +45,23 @@ class JWTAuth(IAuth):
 
         return response
 
-    def reset_password(self, email):
+    @staticmethod
+    def get_token(user: User) -> str:
+        token_data = {
+            "id": user.id,
+            "email": user.email,
+            "password": user.password,
+            "exp": (datetime.now() + timedelta(minutes=15)).timestamp().__int__()
+        }
+        return jwt.encode(token_data, current_app.config['JWT_SECRET_KEY'], algorithm='HS256').decode()
+
+    def reset_password(self, email: str) -> object:
         if not User.contains_with_email(email):
             return jsonify(AuthResponses.UNKNOWN_USER), 400
 
-        token = 'asd'
+        user = User.query.with_entities(User).filter_by(email=email).first()
+        token = self.get_token(user)
+
         msg = Message("Восстановление доступа к аккаунту", recipients=[email])
         
         msg.body = f"""
@@ -55,13 +69,13 @@ class JWTAuth(IAuth):
         Если это сделали не вы, то просто проигнорируйте это сообщение. 
         В случае, если вы действительно забыли пароль, перейдите по ссылке ниже, которая активна 15 минут.
 
-        {current_app.config['HOME_URL']}/reset/{token}
+        {current_app.config['HOME_URL']}/auth/reset/{token}/
         """
         mail.send(msg)
 
         return jsonify(AuthResponses.TOKEN_CREATED), 201
 
-    def logout(self):
+    def logout(self) -> object:
         response = redirect('/auth/', code=303)
         unset_jwt_cookies(response)
 

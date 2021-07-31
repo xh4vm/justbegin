@@ -5,18 +5,18 @@ class IAuth:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def sign_in(self, email, password):
+    def sign_in(self, email: str, password: str) -> object:
         '''Авторизация в сервисе'''
 
     @abstractmethod
-    def sign_up(self, data):
+    def sign_up(self, data: object) -> object:
         '''Регистрация нового пользователя в сервисе'''
 
     @abstractmethod
-    def reset_password(self, email):
+    def reset_password(self, email: str) -> object:
         '''Сброс пароля пользователя'''
 
     @abstractmethod
-    def logout(self):
+    def logout(self) -> object:
         '''Выход'''
     
