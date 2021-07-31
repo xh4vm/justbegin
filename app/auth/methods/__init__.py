@@ -15,4 +15,8 @@ class IAuth:
     @abstractmethod
     def reset_password(self, email):
         '''Сброс пароля пользователя'''
+
+    @abstractmethod
+    def logout(self):
+        '''Выход'''
     

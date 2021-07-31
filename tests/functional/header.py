@@ -1,5 +1,5 @@
 
-from tests.functional.type import Type
+from tests.functional.Type import Type
 
 
 class Header:

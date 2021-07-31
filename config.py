@@ -5,6 +5,7 @@ from datetime import timedelta
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class BaseConfig:
+    HOME_URL = "http://localhost:8000"
     SECRET_KEY = '1b3a10657a23bdd02d5262f375d5255a045b6ccfca4082ecaf7b0c1efea3dfad'
     SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://test:test@db/test'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -21,6 +22,14 @@ class BaseConfig:
     CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
     AUTH_METHOD = 'JWTAuth'
+
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = 'justbeginnoreply@gmail.com'
+    MAIL_DEFAULT_SENDER = 'justbeginnoreply@gmail.com'
+    MAIL_PASSWORD = 'ThisIsPassword!!'
+
 
 class DeployConfig(BaseConfig):
     DEBUG = False

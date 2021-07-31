@@ -7,6 +7,7 @@ from config import Config
 from app.jinja_functions import *
 from flask_redis import FlaskRedis
 from celery import Celery
+from flask_mail import Mail
 
 
 db = SQLAlchemy()
@@ -15,6 +16,7 @@ socketio = SocketIO()
 jwt = JWTManager()
 redis_client = FlaskRedis()
 celery = Celery(__name__, backend=Config.CELERY_RESULT_BACKEND, broker=Config.CELERY_BROKER_URL)
+mail = Mail()
 
 def register_blueprints(app):
     from app.home import bp as home_bp
@@ -32,6 +34,7 @@ def create_app(config_class=Config):
     socketio.init_app(app, message_queue="redis://")
     jwt.init_app(app)
     redis_client.init_app(app)
+    mail.init_app(app)
 
     register_blueprints(app)
 

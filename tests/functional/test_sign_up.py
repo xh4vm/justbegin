@@ -1,11 +1,12 @@
 import json
+from tests.functional.TestAuth import TestAuth
 from tests.functional.base import BaseTestCase
 from app.auth.responses import AuthResponses
-from tests.functional.header import Header
+from tests.functional.Header import Header
 from tests.functional.mocks.sign_up import *
 
 
-class SignUpTestCase(BaseTestCase):
+class SignUpTestCase(BaseTestCase, TestAuth):
 
     def test_sign_up_bad_data_type(self):
 
@@ -43,6 +44,11 @@ class SignUpTestCase(BaseTestCase):
             }), headers=Header.json)
 
             assert response.status_code == 303
+            assert self.get_set_cookie_name(response) == 'access_token_cookie'
+            assert self.get_jwt_identity(response) == 1
+            assert self.get_jwt_claims(response) == {"email":SignUpMock.email,"nickname":SignUpMock.nickname,
+                "avatar":SignUpMock.avatar,"first_name":SignUpMock.first_name,"last_name":SignUpMock.last_name}
+            assert self.verify_exp_jwt(response) == True
 
     def test_sign_up_already_auth(self):
 

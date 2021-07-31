@@ -31,9 +31,10 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
-    def check_email(self):
-        user = User.query.with_entities(User.email).filter_by(email=self.email).first()
-        return True if user is None else False
+    @staticmethod
+    def contains_with_email(email):
+        user = User.query.with_entities(User.email).filter_by(email=email).first()
+        return False if user is None else True
 
     @staticmethod
     @jwt.user_claims_loader

@@ -1,3 +1,4 @@
+from flask_jwt_extended.view_decorators import jwt_required
 from app import db
 from app import auth
 from app.auth import methods
@@ -47,9 +48,22 @@ class Auth(FlaskView):
         instance = self.get_auth_instance()
 
         return instance.sign_up(data=data)
-               
+
     @route('/reset/', methods=["POST"])
+    @jwt_optional       
+    @request_is_json(error_message=AuthResponses.BAD_DATA_TYPE, error_code=400)
+    @already_auth(response=AuthResponses.ALREADY_AUTH, code=208)
     def reset_password(self):
-        pass
+        email = request.json.get("email")
+        instance = self.get_auth_instance()
+
+        return instance.reset_password(email=email)
+
+    @jwt_required
+    @route('/logout/', methods=['GET'])
+    def logout(self):
+        instance = self.get_auth_instance()
+        return instance.logout()
+
 
 Auth.register(bp)
