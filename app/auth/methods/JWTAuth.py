@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from flask import make_response, jsonify, redirect, render_template
 from flask.globals import current_app, request
-from flask_jwt_extended.utils import unset_refresh_cookies
+from flask_jwt_extended.utils import get_jwt_claims, unset_refresh_cookies
 from flask_jwt_extended.view_decorators import jwt_refresh_token_required, jwt_required, jwt_optional
 from app import db, mail
 from app.models import User
@@ -14,7 +14,15 @@ import jwt
 
 class JWTAuth(IAuth):
     @jwt_optional
-    def get(sellf, template: str) -> str:
+    def get_current_user_data_from_token(self, template: str) -> str:
+        id = get_jwt_identity()
+        if id is None:
+            return None
+
+        return id, get_jwt_claims()
+
+    @jwt_optional
+    def get(self, template: str) -> str:
         if get_jwt_identity() is not None:
             return redirect('/', code=303)
 

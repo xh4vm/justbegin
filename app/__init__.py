@@ -25,6 +25,9 @@ def register_blueprints(app):
     from app.auth import bp as auth_bp
     app.register_blueprint(auth_bp)
 
+    from app.project import bp as project_bp
+    app.register_blueprint(project_bp)
+
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)

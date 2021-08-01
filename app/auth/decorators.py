@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import jsonify
+from flask import jsonify, redirect
 from app.auth.utils import get_auth_instance
 
 
