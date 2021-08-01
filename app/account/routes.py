@@ -12,7 +12,7 @@ class Account(FlaskView):
     def get(self):
         return "Аккаунт пользователя", 200
 
-    @route("/setting", methods=["GET", "POST"])
+    @route("/setting/", methods=["GET", "POST"])
     def set_account(self):
         if request.method == "POST":
             first_name = request.json.get("first_name")
@@ -23,7 +23,7 @@ class Account(FlaskView):
         return "Настройки аккаунта", 200        
 
     @check_auth
-    @route('/delete')
+    @route('/delete/')
     def delete_account(self):
        pass
 
