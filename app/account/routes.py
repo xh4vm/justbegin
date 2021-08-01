@@ -2,7 +2,7 @@ from flask import redirect, request
 from flask_jwt_extended import jwt_optional, get_jwt_identity
 from flask_classy import FlaskView, route
 from app.account import bp
-from decorators import check_auth
+from app.decorators import check_auth
 from models import User
 
 

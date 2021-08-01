@@ -4,7 +4,7 @@ from flask import json, render_template, request, jsonify, redirect, current_app
 from flask_classy import FlaskView, route
 from app.project import bp
 from app.project.responses import ProjectResponses
-from app.auth.decorators import auth_required
+from app.decorators import check_auth
 from app.models import Project, User, FavoriteProject
 from flask_socketio import SocketIO
 from app.auth.utils import get_auth_instance
@@ -28,6 +28,7 @@ class Project(FlaskView):
         project = Project.query.get(project_id)
         return render_template('project/index.html', project=project, user=claims)
 
+    @check_auth
     @request_is_json(error_message=ProjectResponses.BAD_DATA_TYPE, error_code=400)
     @route('/like/', methods=['POST'])
     def like(self):
