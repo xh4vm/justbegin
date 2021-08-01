@@ -7,21 +7,12 @@ from models import User
 
 
 class Account(FlaskView):
-    nickname = ""
-    first_name = ""
-    last_name = ""
-    email = ""
-    avatar_path = ""
-    telegram_nickname = ""
-    liked_project = []
 
-    @jwt_optional
     @check_auth
     def get(self):
         return "Аккаунт пользователя", 200
 
-    @check_auth
-    @route("/setting")
+    @route("/setting", methods=["GET", "POST"])
     def set_account(self):
         if request.method == "POST":
             first_name = request.json.get("first_name")
@@ -31,11 +22,12 @@ class Account(FlaskView):
             return redirect("/setting", 302)
         return "Настройки аккаунта", 200        
 
-
     @check_auth
     @route('/delete')
     def delete_account(self):
        pass
+
+Account.register(bp)
 
 
 
