@@ -13,8 +13,11 @@ class BaseConfig:
     JWT_SECRET_KEY = '1b3a10657a23bdd02d5262f375d5255a045b6ccfca4082ecaf7b0c1efea3dfad'
     JWT_TOKEN_LOCATION = ['cookies']
     JWT_COOKIE_CSRF_PROTECT = False
+    JWT_ALGORITHM = 'HS256'
 
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=30)
+    # JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
+    # JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
 
     UPLOADS_DEFAULT_DEST = f'{basedir}/app/static/users'
 

@@ -5,6 +5,14 @@ class IAuth:
     __metaclass__ = ABCMeta
 
     @abstractmethod
+    def get(self, template: str) -> str:
+        '''Получение домашней страницы'''
+
+    @abstractmethod
+    def already_auth(self) -> bool:
+        '''Пользователь уже прошел авторизацию'''
+
+    @abstractmethod
     def sign_in(self, email: str, password: str) -> object:
         '''Авторизация в сервисе'''
 

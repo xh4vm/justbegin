@@ -15,7 +15,7 @@ class SignInTestCase(BaseTestCase, TestAuth):
             assert response.status_code == 400
             assert json.loads(response.data) == AuthResponses.BAD_DATA_TYPE
 
-    def test_sign_in_success(self):
+    def test_sign_in_success_jwt(self):
 
         with self.app.test_client() as test_client:
             SignUpMock.init()
@@ -44,5 +44,23 @@ class SignInTestCase(BaseTestCase, TestAuth):
 
             assert response.status_code == 400
             assert json.loads(response.data) == AuthResponses.BAD_AUTH_DATA
+
+    def test_sign_in_already_auth(self):
+
+        with self.app.test_client() as test_client:
+            SignUpMeMock.init()
+
+            test_client.post('/auth/sign_in/', data=json.dumps({
+                'email': SignUpMeMock.email,
+                'password': SignUpMeMock.password,
+            }), headers=Header.json)
+
+            response = test_client.post('/auth/sign_in/', data=json.dumps({
+                'email': SignUpMeMock.email,
+                'password': SignUpMeMock.password,
+            }), headers=Header.json)
+
+            assert response.status_code == 208
+            assert json.loads(response.data) == AuthResponses.ALREADY_AUTH
 
     

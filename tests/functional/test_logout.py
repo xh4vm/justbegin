@@ -17,7 +17,7 @@ class LogoutTestCase(BaseTestCase, TestAuth):
             response = test_client.get('/auth/logout/')
             assert response.status_code == 401
     
-    def test_login_success(self):
+    def test_login_success_jwt(self):
 
         with self.app.test_client() as test_client:
             SignUpMeMock.init()

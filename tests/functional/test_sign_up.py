@@ -30,7 +30,7 @@ class SignUpTestCase(BaseTestCase, TestAuth):
             assert response.status_code == 400
             assert json.loads(response.data) == AuthResponses.BAD_CONFIRM_PASSWORD
 
-    def test_sign_up_success(self):
+    def test_sign_up_success_jwt(self):
 
         with self.app.test_client() as test_client:
             response = test_client.post('/auth/sign_up/', data=json.dumps({
