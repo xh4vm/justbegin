@@ -10,4 +10,9 @@ class SettingsForm(FlaskForm):
     email = StringField(validators=[DataRequired(), Email(), Length(max=128)])
     telegram_nickname = StringField()
 
-    submit = SubmitField(label=('Submit'))
+    submit = SubmitField(label=('Сохранить'))
+    delete = SubmitField(label=('Удалить аккаунт'))
+
+class DeleteFeedback(FlaskForm):
+    message = StringField(validators=[DataRequired()])
+    submit = SubmitField(label=('Удалить аккаунт'))

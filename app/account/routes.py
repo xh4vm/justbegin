@@ -5,7 +5,7 @@ from app.account import bp
 from app.decorators import check_auth
 from app.auth.utils import get_auth_instance
 from app.models import User
-from forms import SettingsForm
+from forms import SettingsForm, DeleteFeedback
 
 
 class Account(FlaskView):
@@ -28,12 +28,15 @@ class Account(FlaskView):
                 #в setting не забыть выводить сообщения об ошибке
                 return render_template("account/setting.html", form=form)
 
+            if form.delete.data:
+                return redirect("/delete", 302)
+
             user = User.query.filter_by(id = uid).first()
-            user.nickname = form.nickname
-            user.first_name = form.first_name
-            user.last_name = form.last_name
-            user.email = form.email
-            user.telegram_nickname = form.telegram_nickname
+            user.nickname = form.nickname.data
+            user.first_name = form.first_name.data
+            user.last_name = form.last_name.data
+            user.email = form.email.data
+            user.telegram_nickname = form.telegram_nickname.data
             db.session.commit()
             
             return redirect("/setting", 302)
@@ -41,9 +44,23 @@ class Account(FlaskView):
         return render_template("account/setting.html", user = claims)   
 
     @check_auth
-    @route('/delete/')
+    @route('/delete/', methods=["GET", "POST"])
     def delete_account(self):
-       pass
+        form = DeleteFeedback()
+
+        if not form.validate_on_submit():
+            return render_template("account/delete.html", form=form)
+
+        #куда сохраняем сообщение?
+        message = form.message.data
+        uid, claim = get_auth_instance().get_current_user_data_from_token()
+
+        user = User.query.filter_by(id = uid).first()
+        db.session.delete(user)
+        db.session.commit()
+
+        return redirect("/home/", 302)
+
 
 Account.register(bp)
 

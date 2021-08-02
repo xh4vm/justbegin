@@ -29,7 +29,7 @@ class SignInTestCase(BaseTestCase, TestAuth):
             assert self.get_set_cookie_name(response) == 'access_token_cookie'
             assert self.get_jwt_identity(response) == 1
             assert self.get_jwt_claims(response) == {"email":SignUpMock.email,"nickname":SignUpMock.nickname,
-                "avatar":SignUpMock.avatar,"first_name":SignUpMock.first_name,"last_name":SignUpMock.last_name}
+                "avatar":SignUpMock.avatar,"first_name":SignUpMock.first_name,"last_name":SignUpMock.last_name,"telegram_nickname":SignUpMock.telegram_nickname}
             assert self.verify_exp_jwt(response) == True
 
     def test_sign_in_bad_auth_data(self):
