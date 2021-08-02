@@ -48,7 +48,8 @@ class User(db.Model):
             'nickname': user.nickname,
             'avatar': user.avatar,
             'first_name': user.first_name,
-            'last_name': user.last_name
+            'last_name': user.last_name,
+            'telegram_nickname': user.telegram_nickname
         }
 
     @staticmethod

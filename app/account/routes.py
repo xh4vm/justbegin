@@ -1,26 +1,44 @@
-from flask import redirect, request
-from flask_jwt_extended import jwt_optional, get_jwt_identity
+from app import db
+from flask import redirect, request, render_template
 from flask_classy import FlaskView, route
 from app.account import bp
 from app.decorators import check_auth
-from models import User
+from app.auth.utils import get_auth_instance
+from app.models import User
+from forms import SettingsForm
 
 
 class Account(FlaskView):
 
     @check_auth
     def get(self):
-        return "Аккаунт пользователя", 200
+        id, claims = get_auth_instance().get_current_user_data_from_token()
+        
+        return render_template("account/index.html", user = claims)
 
+    @check_auth
     @route("/setting/", methods=["GET", "POST"])
     def set_account(self):
-        if request.method == "POST":
-            first_name = request.json.get("first_name")
-            last_name = request.json.get("second_name")
-            email = request.json.get("email")
-            telegram_nickname = request.json.get("telegram_nickname")
+        uid, claims = get_auth_instance().get_current_user_data_from_token()
+        if request.method == "POST":     
+            #TODO: написать загрузку аватарки
+            form = SettingsForm()
+
+            if not form.validate_on_submit():
+                #в setting не забыть выводить сообщения об ошибке
+                return render_template("account/setting.html", form=form)
+
+            user = User.query.filter_by(id = uid).first()
+            user.nickname = form.nickname
+            user.first_name = form.first_name
+            user.last_name = form.last_name
+            user.email = form.email
+            user.telegram_nickname = form.telegram_nickname
+            db.session.commit()
+            
             return redirect("/setting", 302)
-        return "Настройки аккаунта", 200        
+
+        return render_template("account/setting.html", user = claims)   
 
     @check_auth
     @route('/delete/')
