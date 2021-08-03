@@ -5,16 +5,14 @@ from app.account import bp
 from app.decorators import check_auth
 from app.auth.utils import get_auth_instance
 from app.models import User
-from forms import SettingsForm, DeleteFeedback
-
+from app.account.forms import SettingsForm, DeleteFeedback
 
 class Account(FlaskView):
 
     @check_auth
     def get(self):
-        id, claims = get_auth_instance().get_current_user_data_from_token()
-        
-        return render_template("account/index.html", user = claims)
+        id, claims = get_auth_instance().get_current_user_data_from_token()        
+        return render_template("account/index.html", user = claims), 200
 
     @check_auth
     @route("/setting/", methods=["GET", "POST"])
