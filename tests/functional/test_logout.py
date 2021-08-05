@@ -33,5 +33,11 @@ class LogoutTestCase(BaseTestCase, TestAuth):
             assert self.get_set_cookie_name(response) == 'access_token_cookie'
             assert self.get_token(response) == ''
 
+            response = test_client.get('/auth/logout/')
+
+            assert response.status_code == 401
+
+
+
 
 

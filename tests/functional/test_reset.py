@@ -1,4 +1,3 @@
-from sqlalchemy.orm import selectin_polymorphic
 from app.auth.methods.JWTAuth import JWTAuth
 import json
 from tests.functional.TestAuth import TestAuth

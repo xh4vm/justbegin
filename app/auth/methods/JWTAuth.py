@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 from flask import make_response, jsonify, redirect, render_template
 from flask.globals import current_app, request
-from flask_jwt_extended.utils import get_jwt_claims, unset_refresh_cookies
+from flask_jwt_extended.utils import get_jwt_claims
 from flask_jwt_extended.view_decorators import jwt_refresh_token_required, jwt_required, jwt_optional
 from app import db, mail
 from app.models import User
 from app.auth.responses import AuthResponses
-from flask_jwt_extended import create_access_token, set_access_cookies, unset_jwt_cookies, get_jwt_identity
+from flask_jwt_extended import create_access_token, set_access_cookies, unset_jwt_cookies, get_jwt_identity, verify_jwt_in_request
 from app.auth.methods import IAuth
 from flask_mail import Message
 import jwt
@@ -14,7 +14,7 @@ import jwt
 
 class JWTAuth(IAuth):
     @jwt_optional
-    def get_current_user_data_from_token(self, template: str) -> str:
+    def get_current_user_data_from_token(self) -> tuple:
         id = get_jwt_identity()
         if id is None:
             return None
@@ -23,14 +23,18 @@ class JWTAuth(IAuth):
 
     @jwt_optional
     def get(self, template: str) -> str:
-        if get_jwt_identity() is not None:
+        if self.already_auth():
             return redirect('/', code=303)
 
         return render_template(template), 200
     
     @jwt_optional
     def already_auth(self) -> bool:
-        return True if get_jwt_identity() is not None else False
+        try:
+           verify_jwt_in_request()
+           return True
+        except:
+            return False
     
     @jwt_optional
     def sign_in(self, email: str, password: str) -> object:
@@ -104,7 +108,7 @@ class JWTAuth(IAuth):
         response = redirect('/auth/', code=303)
         unset_jwt_cookies(response)
 
-        return response
+        return response, 303
 
     # @jwt_refresh_token_required
     # def refresh(self):

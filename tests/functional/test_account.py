@@ -17,4 +17,4 @@ class AccountTestCase(BaseTestCase, TestAuth):
                 'password': SignUpMock.password
             }), headers = Header.json)
 
-            assert response.status_code == 302
+            assert response.status_code == 303

@@ -13,3 +13,12 @@ def already_auth(response: str, code: int):
             return f(*args, **kwargs)
         return decorated_function
     return decorator
+
+def check_auth(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        instance = get_auth_instance()
+        if not instance.already_auth():
+            return redirect('/auth/', code=303)
+        return f(*args, **kwargs)
+    return decorated_function

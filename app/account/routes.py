@@ -2,7 +2,7 @@ from app import db
 from flask import redirect, request, render_template
 from flask_classy import FlaskView, route
 from app.account import bp
-from app.decorators import check_auth
+from app.auth.decorators import check_auth
 from app.auth.utils import get_auth_instance
 from app.models import User
 from app.account.forms import SettingsForm, DeleteFeedback
@@ -27,7 +27,7 @@ class Account(FlaskView):
                 return render_template("account/setting.html", form=form)
 
             if form.delete.data:
-                return redirect("/delete", 302)
+                return redirect("/delete"), 303
 
             user = User.query.filter_by(id = uid).first()
             user.nickname = form.nickname.data
@@ -37,7 +37,7 @@ class Account(FlaskView):
             user.telegram_nickname = form.telegram_nickname.data
             db.session.commit()
             
-            return redirect("/setting", 302)
+            return redirect("/setting"), 303
 
         return render_template("account/setting.html", user = claims)   
 
@@ -57,7 +57,7 @@ class Account(FlaskView):
         db.session.delete(user)
         db.session.commit()
 
-        return redirect("/home/", 302)
+        return redirect("/home/"), 303
 
 
 Account.register(bp)
