@@ -1,12 +1,13 @@
 from flask import render_template
-from wtforms.validators import ValidationError, DataRequired, Length
-from wtforms import Form, StringField, SubmitField
+from wtforms.validators import ValidationError, DataRequired, Length, Email
+from wtforms.form import Form
+from wtforms import StringField, SubmitField
 
 class SettingsForm(Form):
     nickname = StringField(validators=[DataRequired(), Length(min=3, max=64)])
     first_name = StringField()
     last_name = StringField()
-    email = StringField(validators=[DataRequired(), Length(max=128)])
+    email = StringField(validators=[DataRequired(), Email(), Length(max=128)])
     telegram_nickname = StringField()
 
     submit = SubmitField(label=('Сохранить'))

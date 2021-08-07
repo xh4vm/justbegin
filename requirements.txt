@@ -53,7 +53,6 @@ toml==0.10.2
 vine==5.0.0
 wcwidth==0.2.5
 Werkzeug==1.0.1
-WTForms==2.3.3
-#email-validator==1.0.5
+WTForms[email]==2.3.3
 zope.event==4.4
 zope.interface==5.1.0
