@@ -54,7 +54,7 @@ class Account(FlaskView):
 
         if request.method == 'POST':
 
-            if not form.validate_on_submit():
+            if not form.validate():
                 return render_template("account/delete.html", form=form)
 
             #куда сохраняем сообщение?

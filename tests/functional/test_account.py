@@ -56,14 +56,11 @@ class AccountTestCase(BaseTestCase, TestAuth):
                 'password': SignUpMock.password,
             }), headers=Header.json)
 
-            settings = SettingsForm(nickname=SignUpMock.nickname, first_name=SignUpMock.first_name,
-                last_name=SignUpMock.last_name, email=SignUpMock.email,
-                telegram_nickname=SignUpMock.telegram_nickname, delete="Удалить аккаунт")
+            delete = DeleteFeedback(message='My dream is dead...', submit='Удалить аккаунт')
 
-            response = test_client.post('/account/setting/', data=settings.data)
-            #not_exists = User.query(User.id).filter_by(nickname = SignUpMock.nickname).first() is None
+            response = test_client.post('/account/delete/', data=delete.data)
             not_exist = db.session.query(User.id).filter_by(nickname = SignUpMock.nickname).first() is None
 
-            #assert not_exist
+            assert not_exist
             assert response.status_code == 303
 
