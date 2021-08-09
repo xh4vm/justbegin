@@ -6,6 +6,8 @@ from app.auth.decorators import check_auth
 from app.auth.utils import get_auth_instance
 from app.models import User
 from app.account.forms import SettingsForm, DeleteFeedback
+from app import mail
+from flask_mail import Message
 
 class Account(FlaskView):
 
@@ -57,9 +59,13 @@ class Account(FlaskView):
             if not form.validate():
                 return render_template("account/delete.html", form=form)
 
-            #куда сохраняем сообщение?
-            message = form.message.data
+            user_message = form.message.data
             uid, claim = get_auth_instance().get_current_user_data_from_token()
+
+            msg = Message("Сообщение об удалении аккаунта пользователем %s" % claim.nickname,
+                reciplients=['justbeginnoreply@gmail.com'])         
+            msg.body = user_message
+            mail.send(msg)
 
             user = User.query.filter_by(id = uid).first()
             db.session.delete(user)
