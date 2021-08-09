@@ -41,11 +41,11 @@ class Account(FlaskView):
             
             return redirect('/setting/'), 303
 
-        form.nickname = claims.nickname
-        form.first_name = claims.first_name
-        form.last_name = claims.last_name
-        form.email = claims.email
-        form.telegram_nickname = claims.telegram_nickname
+        form.nickname = claims['nickname']
+        form.first_name = claims['first_name']
+        form.last_name = claims['last_name']
+        form.email = claims['email']
+        form.telegram_nickname = claims['telegram_nickname']
 
         return render_template('account/setting.html', form = form)   
 
@@ -61,14 +61,13 @@ class Account(FlaskView):
 
             user_message = form.message.data
             uid, claims = get_auth_instance().get_current_user_data_from_token()   
-
-            user = User.query.filter_by(id = uid).first()         
-
-            msg = Message("Сообщение об удалении аккаунта пользователем %s" % user.nickname,
+                     
+            msg = Message("Сообщение об удалении аккаунта пользователем %s" % claims['nickname'],
                 recipients=['justbeginnoreply@gmail.com'])
             msg.body = user_message
             mail.send(msg)
 
+            user = User.query.filter_by(id = uid).first()
             db.session.delete(user)
             db.session.commit()
 
