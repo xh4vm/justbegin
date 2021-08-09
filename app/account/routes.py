@@ -60,14 +60,15 @@ class Account(FlaskView):
                 return render_template("account/delete.html", form=form)
 
             user_message = form.message.data
-            uid, claim = get_auth_instance().get_current_user_data_from_token()
+            uid, claims = get_auth_instance().get_current_user_data_from_token()   
 
-            msg = Message("Сообщение об удалении аккаунта пользователем %s" % claim.nickname,
-                reciplients=['justbeginnoreply@gmail.com'])         
+            user = User.query.filter_by(id = uid).first()         
+
+            msg = Message("Сообщение об удалении аккаунта пользователем %s" % user.nickname,
+                recipients=['justbeginnoreply@gmail.com'])
             msg.body = user_message
             mail.send(msg)
 
-            user = User.query.filter_by(id = uid).first()
             db.session.delete(user)
             db.session.commit()
 
