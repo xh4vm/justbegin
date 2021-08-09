@@ -10,14 +10,28 @@ from app.account.forms import SettingsForm, DeleteFeedback
 
 class AccountTestCase(BaseTestCase, TestAuth):
 
+    def test_setting_page_auth(self):
+
+        with self.app.test_client() as test_client:
+            SignUpMock.init()
+
+            response = test_client.get('/account/setting/')
+            assert response.status_code == 303
+
+    def test_delete_page_auth(self):
+
+        with self.app.test_client() as test_client:
+            SignUpMock.init()
+
+            response = test_client.get('/account/delete/')
+            assert response.status_code == 303
+
     def test_index_page_auth(self):
 
         with self.app.test_client() as test_client:
-            response = test_client.get('/account/', data=json.dumps({
-                'email': SignUpMock.email,
-                'password': SignUpMock.password
-            }), headers = Header.json)
+            SignUpMock.init()
 
+            response = test_client.get('/account/')
             assert response.status_code == 303
 
     
