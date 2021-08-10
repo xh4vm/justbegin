@@ -1,3 +1,4 @@
+import re
 from app import db, socketio
 from app.decorators import request_is_json
 from flask import json, render_template, request, jsonify, redirect, current_app
@@ -66,7 +67,7 @@ class Project(FlaskView):
 
     @route('/status_favorites/', methods=['POST'])
     def status_favorites(self):
-        projects = ProjectModel.query.with_entities(Project.id, func.count(FavoriteProject.project_id).label('count'))\
+        projects = ProjectModel.query.with_entities(ProjectModel.id, func.count(FavoriteProject.project_id).label('count'))\
             .filter(ProjectModel.id == FavoriteProject.project_id)\
             .group_by(FavoriteProject.project_id).all()
 
@@ -76,7 +77,7 @@ class Project(FlaskView):
     @request_is_json(error_message=ProjectResponses.BAD_DATA_TYPE, error_code=400)
     @verify_authorship(request_key='project_id')
     @route('/remove/', methods=['POST'])
-    def remove():
+    def remove(self):
         project_id = request.json.get('project_id')
         project = ProjectModel.query.get(project_id)
 
@@ -86,6 +87,9 @@ class Project(FlaskView):
         db.session.delete(project)
         db.session.commit()
 
-        return jsonify({'status': 'success', 'text': f'Проект {project.title} был успешно удален.'})
+        right_response = ProjectResponses.SUCCESS_REMOVE.copy()
+        right_response["message"] = right_response["message"].substitute(title=project.title)
+
+        return jsonify(right_response), 200
 
 Project.register(bp)
