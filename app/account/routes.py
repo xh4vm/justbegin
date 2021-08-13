@@ -1,3 +1,4 @@
+from flask.json import jsonify
 from app import db
 from flask import redirect, request, render_template
 from flask_classy import FlaskView, route
@@ -11,21 +12,23 @@ from flask_mail import Message
 
 class Account(FlaskView):
 
+    #получение данных пользователя
     @check_auth
     def get(self):
-        id, claims = get_auth_instance().get_current_user_data_from_token()        
-        return render_template("account/index.html", user = claims), 200
+        id, claims = get_auth_instance().get_current_user_data_from_token()   
+        return jsonify(claims), 200        
 
+    #получение/заполнение формы с данными пользователя
     @check_auth
     @route("/setting/", methods=["GET", "POST"])
     def set_account(self):
         form = SettingsForm(request.form)
         uid, claims = get_auth_instance().get_current_user_data_from_token()
-        if request.method == 'POST':     
+        if request.method == 'POST':
             #TODO: написать загрузку аватарки            
             
             if not form.validate():
-                #в setting не забыть выводить сообщения об ошибке
+                #в setting не забыть выводить сообщения об ошибке                
                 return render_template('account/setting.html', form=form)
 
             if form.delete.data:
@@ -49,6 +52,7 @@ class Account(FlaskView):
 
         return render_template('account/setting.html', form = form)   
 
+    #удаление аккаунта пользователя с сообщением о причине
     @check_auth
     @route('/delete/', methods=["GET", "POST"])
     def delete_account(self):
