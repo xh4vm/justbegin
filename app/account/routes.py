@@ -27,14 +27,10 @@ class Account(FlaskView):
         if request.method == 'POST':
             #TODO: написать загрузку аватарки            
             
-            if not form.validate():
-                #в setting не забыть выводить сообщения об ошибке                
-                return render_template('account/setting.html', form=form)
-
             if form.delete.data:
                 return redirect('/delete/'), 303
                        
-            user = User.query.filter_by(id = uid).first()
+            user = User.query.filter_by(id = 1).first()
             user.nickname = form.nickname.data
             user.first_name = form.first_name.data
             user.last_name = form.last_name.data
