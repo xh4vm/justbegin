@@ -1,16 +1,16 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_socketio import SocketIO
-from flask_jwt_extended import JWTManager
-from config import Config
-from app.jinja_functions import *
-from flask_redis import FlaskRedis
 from celery import Celery
+from config import Config
+from flask import Flask
+from flask_jwt_extended import JWTManager
 from flask_mail import Mail
+from flask_migrate import Migrate
+from flask_redis import FlaskRedis
+from flask_socketio import SocketIO
 
+from app.jinja_functions import *
 
-db = SQLAlchemy()
+from .db import db
+
 migrate = Migrate()
 socketio = SocketIO()
 jwt = JWTManager()
