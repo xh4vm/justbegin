@@ -1,5 +1,10 @@
 from flask import Blueprint
 
-bp = Blueprint('projects', __name__)
+from .comment.routes import Comments, CommentUpvotes
+from .routes import Projects
 
-from app.project import routes
+bp = Blueprint('projects', __name__, url_prefix='/projects')
+
+Projects.register(bp, route_base='/')
+Comments.register(bp, route_base='/')
+CommentUpvotes.register(bp, route_base='/')

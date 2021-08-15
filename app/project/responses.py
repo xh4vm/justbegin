@@ -1,5 +1,6 @@
-from app.responses import DefaultResponses
 from string import Template
+
+from app.responses import DefaultResponses
 
 
 class ProjectResponses(DefaultResponses):

@@ -1,40 +1,45 @@
-import re
-from app import db, socketio
-from app.decorators import request_is_json
-from flask import json, render_template, request, jsonify, redirect, current_app
+from flask import request, jsonify
 from flask_classy import FlaskView, route
-from app.project import bp
-from app.project.responses import ProjectResponses
+from sqlalchemy.orm.scoping import scoped_session
+from sqlalchemy.sql.functions import func
+
+from app import db
 from app.auth.decorators import check_auth
-from app.project.decorators import verify_authorship
-from app.models import Project as ProjectModel, User, FavoriteProject
 from app.auth.utils import get_auth_instance
-from sqlalchemy.sql.functions import func 
+from app.decorators import request_is_json
+from app.models import FavoriteProject
+from app.project.decorators import verify_authorship
+from app.project.responses import ProjectResponses
+from .models import Project
+from .serializers import serialize_project
 
 
-class Project(FlaskView):
+class Projects(FlaskView):
 
-    def get(self):
-        id, claims = get_auth_instance().get_current_user_data_from_token()
-        per_page, page = 20, request.args.get('page', 1, type=int)
+    session: scoped_session = db.session
 
-        projects = ProjectModel.query.with_entities(ProjectModel).order_by(db.desc(ProjectModel.create_at))\
-            .paginate(page, per_page)
+    def index(self):
+        projects = (self.session
+                    .query(Project)
+                    .order_by(Project.created_at)
+                    .all())
 
-        return render_template('project/index.html', projects=projects, user=claims)
+        return jsonify(list(map(serialize_project, projects))), 200
 
+    # TODO: Check auth.
     @check_auth
-    @route('/create/', methods=['GET'])
-    def create(self):
-        id, claims = get_auth_instance().get_current_user_data_from_token()
-        # return render_template('project/creator.html', user=claims), 200
-        return "шаблон"
+    def post(self):
+        project = Project(request.form['title'], request.form['description'], request.form['website'])
+        self.session.add(project)
+        self.session.commit()
+
+        return jsonify({'id': project.id}), 200
 
     @route('/<int:project_id>/')
     def get_project(self, project_id):
         id, claims = get_auth_instance().get_current_user_data_from_token()
 
-        project = ProjectModel.query.get(project_id)
+        project = Project.query.get(project_id)
         # return render_template('project/index.html', project=project, user=claims)
         return "шаблон"
 
@@ -45,7 +50,7 @@ class Project(FlaskView):
         id, claims = get_auth_instance().get_current_user_data_from_token()
         project_id = request.json.get('project_id')
 
-        project = ProjectModel.query.get(project_id)
+        project = Project.query.get(project_id)
 
         if project is None:
             return jsonify(ProjectResponses.BAD_PROJECT_ID_DATA), 400
@@ -67,8 +72,8 @@ class Project(FlaskView):
 
     @route('/status_favorites/', methods=['POST'])
     def status_favorites(self):
-        projects = ProjectModel.query.with_entities(ProjectModel.id, func.count(FavoriteProject.project_id).label('count'))\
-            .filter(ProjectModel.id == FavoriteProject.project_id)\
+        projects = Project.query.with_entities(Project.id, func.count(FavoriteProject.project_id).label('count'))\
+            .filter(Project.id == FavoriteProject.project_id)\
             .group_by(FavoriteProject.project_id).all()
 
         return jsonify({"status": "success", "projects": projects}), 200
@@ -79,7 +84,7 @@ class Project(FlaskView):
     @route('/remove/', methods=['POST'])
     def remove(self):
         project_id = request.json.get('project_id')
-        project = ProjectModel.query.get(project_id)
+        project = Project.query.get(project_id)
 
         if project is None:
             return jsonify(ProjectResponses.BAD_PROJECT_ID_DATA), 400
@@ -91,5 +96,3 @@ class Project(FlaskView):
         right_response["message"] = right_response["message"].substitute(title=project.title)
 
         return jsonify(right_response), 200
-
-Project.register(bp)
