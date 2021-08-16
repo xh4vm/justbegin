@@ -4,11 +4,12 @@ from flask import redirect, request, render_template
 from flask_classy import FlaskView, route
 from app.account import bp
 from app.auth.decorators import check_auth
+from app.decorators import request_is_json
 from app.auth.utils import get_auth_instance
 from app.models import User
-from app.account.forms import SettingsForm, DeleteFeedback
 from app import mail
 from flask_mail import Message
+from app.responses import DefaultResponses
 
 class Account(FlaskView):
 
@@ -20,48 +21,38 @@ class Account(FlaskView):
 
     #получение/заполнение формы с данными пользователя
     @check_auth
-    @route("/setting/", methods=["GET", "POST"])
-    def set_account(self):
-        form = SettingsForm(request.form)
+    @route("/settings/", methods=["GET", "POST"])
+    def set_account(self):        
         uid, claims = get_auth_instance().get_current_user_data_from_token()
         if request.method == 'POST':
             #TODO: написать загрузку аватарки            
             
-            if form.delete.data:
+            if request.json.get("delete"):
                 return redirect('/delete/'), 303
                        
-            user = User.query.filter_by(id = 1).first()
-            user.nickname = form.nickname.data
-            user.first_name = form.first_name.data
-            user.last_name = form.last_name.data
-            user.email = form.email.data
-            user.telegram_nickname = form.telegram_nickname.data
+            user = User.query.filter_by(id = uid).first()
+            user.nickname = request.json.get("nickname")
+            user.first_name = request.json.get("first_name")
+            user.last_name = request.json.get("last_name")
+            user.email = request.json.get("email")
+            user.telegram_nickname = request.json.get("telegram_nickname")
             db.session.commit()
             
-            return redirect('/setting/'), 303
+            return redirect('/settings/'), 303
 
-        form.nickname = claims['nickname']
-        form.first_name = claims['first_name']
-        form.last_name = claims['last_name']
-        form.email = claims['email']
-        form.telegram_nickname = claims['telegram_nickname']
-
-        return render_template('account/setting.html', form = form)   
+        return jsonify(nickname=claims['nickname'], first_name=claims['first_name'],
+        last_name=claims['last_name'], email=claims['email'],
+        telegram_nickname=claims['telegram_nickname']), 200
 
     #удаление аккаунта пользователя с сообщением о причине
-    @check_auth
+    @check_auth    
     @route('/delete/', methods=["GET", "POST"])
     def delete_account(self):
-        form = DeleteFeedback(request.form)
-
+        uid, claims = get_auth_instance().get_current_user_data_from_token() 
         if request.method == 'POST':
 
-            if not form.validate():
-                return render_template("account/delete.html", form=form)
-
-            user_message = form.message.data
-            uid, claims = get_auth_instance().get_current_user_data_from_token()   
-                     
+            user_message = request.json.get("user_message")
+                                   
             msg = Message("Сообщение об удалении аккаунта пользователем %s" % claims['nickname'],
                 recipients=['justbeginnoreply@gmail.com'])
             msg.body = user_message
@@ -72,7 +63,8 @@ class Account(FlaskView):
             db.session.commit()
 
             return redirect("/home/"), 303
-        return render_template("account/delete.html", form=form)
+
+        return jsonify(nickname = claims["nickname"]), 200
 
 
 Account.register(bp)
