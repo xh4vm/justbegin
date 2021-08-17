@@ -36,4 +36,6 @@ venv.bak/
 #SQlite Database
 *.db
 postgres-data/
+
+.idea
 .DS_Store

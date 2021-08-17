@@ -14,7 +14,7 @@ class AccountTestCase(BaseTestCase, TestAuth):
             SignUpMock.init()
 
             response = test_client.get('/account/')
-            assert response.status_code == 303
+            assert response.status_code == 401
 
     def test_success_get_account_page(self):
         with self.app.test_client() as test_client:
@@ -36,7 +36,7 @@ class AccountTestCase(BaseTestCase, TestAuth):
         with self.app.test_client() as test_client:
 
             response = test_client.get('/account/settings/')
-            assert response.status_code == 303
+            assert response.status_code == 401
     
     def test_settings_post_form(self):
         with self.app.test_client() as test_client:
@@ -86,7 +86,7 @@ class AccountTestCase(BaseTestCase, TestAuth):
         with self.app.test_client() as test_client:
 
             response = test_client.get('/account/delete/')
-            assert response.status_code == 303
+            assert response.status_code == 401
 
     def test_settings_delete_post_form(self):
         with self.app.test_client() as test_client:
