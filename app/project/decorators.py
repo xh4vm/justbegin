@@ -1,29 +1,12 @@
 from functools import wraps
 
 from flask import jsonify, request, abort
-from marshmallow import Schema, ValidationError
 
 from .comment.models import ProjectComment
 from .models import Project
 from .responses import ProjectResponses
 from ..auth.utils import get_auth_instance
 from ..models import ProjectCreator
-
-
-def request_validation_required(schema: Schema):
-    def decorator(f):
-        @wraps(f)
-        def decorated_function(*args, **kwargs):
-            try:
-                validated_request = schema.load(request.form)
-            except ValidationError as error:
-                return jsonify({'errors': error.messages}), 400
-
-            kwargs['validated_request'] = validated_request
-
-            return f(*args, **kwargs)
-        return decorated_function
-    return decorator
 
 
 def verify_authorship(request_key: str):

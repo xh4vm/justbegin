@@ -5,7 +5,8 @@ from sqlalchemy.orm.scoping import scoped_session
 
 from .models import ProjectComment
 from .schemas import post_comment_schema, put_comment_schema
-from ..decorators import request_validation_required, comment_authorship_required
+from ..decorators import comment_authorship_required
+from ...decorators import request_validation_required
 from ..serializers import serialize_project_comment
 from ... import db
 from ...auth.decorators import user_required
