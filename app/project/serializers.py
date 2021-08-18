@@ -23,7 +23,8 @@ def serialize_project_comments(comments: List[ProjectComment]) -> list:
             'content': comment.content,
             'score': comment.score,
             'replies': serialize_project_comments(comment.replies),
-            'created_at': comment.created_at
+            'created_at': comment.created_at,
+            'updated_at': comment.updated_at,
         })
 
     return sorted(result, key=lambda c: c['score'], reverse=True)

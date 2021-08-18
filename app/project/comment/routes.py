@@ -66,26 +66,35 @@ class Comments(FlaskView):
         return jsonify({'id': comment_id}), 200
 
 
-class CommentUpvotes(FlaskView):
+class CommentVotes(FlaskView):
     session: scoped_session = db.session
 
     @user_required
-    @route('/<int:project_id>/comments/upvotes')
+    @route('/<int:project_id>/comments/votes', methods=['GET'])
     def index(self, user_id: int, project_id: int) -> tuple:
+        # TODO: Frontend needs to know which comments user has already voted for.
         pass
 
     @user_required
-    @route('/comments/<int:comment_id>/upvotes', methods=['POST'])
-    def post(self, user_id: int, comment_id: int):
-        comment = self.session.query(ProjectComment).filter(ProjectComment.id == comment_id).one()
+    @route('/comments/<int:comment_id>/votes/up', methods=['POST'])
+    def up(self, user_id: int, comment_id: int):
+        comment: ProjectComment = self.session.query(ProjectComment).filter(ProjectComment.id == comment_id).one()
         comment.upvote(user_id)
 
-        return '', 200
+        return jsonify(), 200
 
     @user_required
-    @route('/comments/<int:comment_id>/upvotes', methods=['DELETE'])
-    def delete(self, user_id: int, comment_id: int):
-        comment = self.session.query(ProjectComment).filter(ProjectComment.id == comment_id).one()
+    @route('/comments/<int:comment_id>/votes/down', methods=['POST'])
+    def down(self, user_id: int, comment_id: int):
+        comment: ProjectComment = self.session.query(ProjectComment).filter(ProjectComment.id == comment_id).one()
+        comment.downvote(user_id)
+
+        return jsonify(), 200
+
+    @user_required
+    @route('/comments/<int:comment_id>/votes/annul', methods=['POST'])
+    def annul(self, user_id: int, comment_id: int):
+        comment: ProjectComment = self.session.query(ProjectComment).filter(ProjectComment.id == comment_id).one()
         comment.annul_vote(user_id)
 
-        return '', 200
+        return jsonify(), 200
