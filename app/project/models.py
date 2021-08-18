@@ -1,8 +1,8 @@
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql.schema import Column
-from sqlalchemy.sql.sqltypes import String
+from sqlalchemy.orm import relationship, backref
+from sqlalchemy.sql.schema import Column, ForeignKey
+from sqlalchemy.sql.sqltypes import String, Integer
 
-from ..db import Model
+from ..db import Model, BaseModel
 
 
 class Project(Model):
@@ -17,3 +17,8 @@ class Project(Model):
         self.title = title
         self.description = description
         self.website = website
+
+class FavoriteProject(BaseModel):
+
+    user_id : int = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    project_id : int = Column(Integer, ForeignKey('projects.id'), primary_key=True)

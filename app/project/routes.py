@@ -7,7 +7,7 @@ from app import db
 from app.auth.decorators import check_auth
 from app.auth.utils import get_auth_instance
 from app.decorators import request_is_json
-from app.models import FavoriteProject
+from app.project.models import FavoriteProject
 from app.project.decorators import verify_authorship
 from app.project.responses import ProjectResponses
 from .models import Project
@@ -39,15 +39,13 @@ class Projects(FlaskView):
         id, claims = get_auth_instance().get_current_user_data_from_token()
 
         project = Project.query.get(project_id)
-        # return render_template('project/index.html', project=project, user=claims)
         return "шаблон"
 
     @check_auth
-    @request_is_json(error_message=ProjectResponses.BAD_DATA_TYPE, error_code=400)
     @route('/like/', methods=['POST'])
     def like(self):
         id, claims = get_auth_instance().get_current_user_data_from_token()
-        project_id = request.json.get('project_id')
+        project_id = request.form.get('project_id')
 
         project = Project.query.get(project_id)
 
@@ -67,7 +65,10 @@ class Projects(FlaskView):
 
         db.session.commit()
 
-        return jsonify({"status": "success", "count": len(project.favorites), "active": active}), 200
+        favorites = db.session.query(func.count(FavoriteProject.project_id).label('count'))\
+            .group_by(FavoriteProject.project_id).first()
+
+        return jsonify({"status": "success", "count": favorites.count if favorites is not None else 0, "active": active}), 200
 
     @route('/status_favorites/', methods=['POST'])
     def status_favorites(self):
@@ -78,11 +79,10 @@ class Projects(FlaskView):
         return jsonify({"status": "success", "projects": projects}), 200
 
     @check_auth
-    @request_is_json(error_message=ProjectResponses.BAD_DATA_TYPE, error_code=400)
     @verify_authorship(request_key='project_id')
     @route('/remove/', methods=['POST'])
     def remove(self):
-        project_id = request.json.get('project_id')
+        project_id = request.form.get('project_id')
         project = Project.query.get(project_id)
 
         if project is None:

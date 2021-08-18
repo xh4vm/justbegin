@@ -58,42 +58,11 @@ class User(db.Model):
     def add_identity(user):
         return user.id
 
-class FavoriteProject(db.Model):
-    __tablename__ = "favorite_project"
-
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
-    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), primary_key=True)
-
 class ProjectCreator(db.Model):
     __tablename__ = 'project_creator'
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), primary_key=True)
-
-class ProjectWorker(db.Model):
-    __tablename__ = 'project_worker'
-
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
-    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), primary_key=True)
-
-class ProjectStar(db.Model):
-    __tablename__ = 'project_star'
-
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
-    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), primary_key=True)
-    create_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
-
-class Category(db.Model):
-    __tablename__ = "category"
-
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(128), nullable=False, unique=True)
-
-class ProjectCategory(db.Model):
-    __tablename__ = "project_category"
-
-    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), primary_key=True)
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), primary_key=True)
 
 class ProjectBlog(db.Model):
     __tablename__ = "project_blog"

@@ -1,4 +1,5 @@
 from random import randint
+from tests.functional.header import Header
 
 from app.db import db
 from app.project.comment.models import ProjectComment
@@ -44,3 +45,4 @@ def upvote_comment(comment: ProjectComment, times: int = None) -> int:
         comment.upvote(create_user().id)
 
     return score
+
