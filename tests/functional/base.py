@@ -1,9 +1,13 @@
-from config import TestConfig
 from flask_testing import TestCase
-from app import create_app, db, redis_client
+from sqlalchemy.orm.scoping import scoped_session
+
+from app import create_app, redis_client
+from app.db import db
+from config import TestConfig
 
 
 class BaseTestCase(TestCase):
+    session: scoped_session = db.session
 
     def create_app(self): 
         return create_app(TestConfig)

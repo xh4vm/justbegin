@@ -36,7 +36,7 @@ def comment_authorship_required(f):
             abort(401)
 
         user_id: int = get_auth_instance().get_current_user_data_from_token()[0]
-        comment: ProjectComment = ProjectComment.query.filter(ProjectComment.id == kwargs.get('comment_id')).one()
+        comment: ProjectComment = ProjectComment.query.get(kwargs.get('comment_id'))
 
         if user_id != comment.author_user_id:
             abort(403)

@@ -1,7 +1,4 @@
-import json
 from tests.functional.base import BaseTestCase
-from tests.functional.header import Header
-from tests.functional.mocks.sign_up import SignUpMeMock
 
 
 class ProjectCreateTestCase(BaseTestCase):

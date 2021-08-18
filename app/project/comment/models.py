@@ -4,6 +4,7 @@ from sqlalchemy.orm.scoping import scoped_session
 from sqlalchemy.sql.functions import sum, coalesce
 from sqlalchemy.sql.sqltypes import String, Integer
 
+from .exceptions import UnexpectedProjectRelation
 from ...db import Model
 from ...models import User
 
@@ -24,7 +25,7 @@ class ProjectComment(Model):
             parent = self.session.query(self.__class__).filter(self.__class__.id == parent_comment_id).one()
 
             if parent.project_id != project_id:
-                raise ValueError('The parent comment must belong to the same project as the child')
+                raise UnexpectedProjectRelation('The parent comment must belong to the same project as the child')
 
         self.project_id = project_id
         self.author_user_id = author_user_id

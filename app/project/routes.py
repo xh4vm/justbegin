@@ -26,7 +26,6 @@ class Projects(FlaskView):
 
         return jsonify(list(map(serialize_project, projects))), 200
 
-    # TODO: Check auth.
     @check_auth
     def post(self):
         project = Project(request.form['title'], request.form['description'], request.form['website'])

@@ -1,0 +1,2 @@
+class UnexpectedProjectRelation(Exception):
+    pass

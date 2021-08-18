@@ -1,8 +1,8 @@
-from datetime import datetime
 import re
+from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import TIMESTAMP, Column, BigInteger
+from sqlalchemy import TIMESTAMP, Column, BigInteger, Integer
 from sqlalchemy.ext.declarative.api import declared_attr
 from sqlalchemy.orm.scoping import scoped_session
 
@@ -14,7 +14,7 @@ class Model(db.Model):
 
     session: scoped_session = db.session
 
-    id: int = Column(BigInteger, nullable=False, unique=True, primary_key=True, autoincrement=True)
+    id: int = Column(BigInteger().with_variant(Integer, 'sqlite'), nullable=False, unique=True, primary_key=True)
     created_at: datetime = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow)
     updated_at: datetime = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
