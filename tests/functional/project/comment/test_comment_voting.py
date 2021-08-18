@@ -63,6 +63,28 @@ class ProjectCommentUpvoting(BaseTestCase):
 
             assert comment.score == initial_score - 1
 
+    def test_user_cannot_upvote_own_comment(self) -> None:
+        with self.app.test_client() as client:
+            author = sign_in(client)
+            comment = create_project_comment(author_user_id=author.id)
+            initial_score = upvote_comment(comment)
+
+            response = client.post(f'/projects/comments/{comment.id}/votes/up')
+
+            assert response.status_code == 400
+            assert comment.score == initial_score
+
+    def test_user_cannot_downvote_own_comment(self) -> None:
+        with self.app.test_client() as client:
+            author = sign_in(client)
+            comment = create_project_comment(author_user_id=author.id)
+            initial_score = upvote_comment(comment)
+
+            response = client.post(f'/projects/comments/{comment.id}/votes/down')
+
+            assert response.status_code == 400
+            assert comment.score == initial_score
+
     def test_unauthorized_user_cannot_upvote_comment(self) -> None:
         with self.app.test_client() as client:
             comment = create_project_comment()

@@ -4,3 +4,7 @@ class UnexpectedProjectRelation(Exception):
 
 class InvalidProjectCommentVoteValue(Exception):
     pass
+
+
+class OwnCommentVoting(Exception):
+    pass

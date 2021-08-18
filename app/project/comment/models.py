@@ -1,11 +1,11 @@
 from sqlalchemy import Column, ForeignKey, UniqueConstraint
+from sqlalchemy.event import listens_for
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.scoping import scoped_session
 from sqlalchemy.sql.functions import sum, coalesce
 from sqlalchemy.sql.sqltypes import String, Integer, SmallInteger
-from sqlalchemy.event import listens_for
 
-from .exceptions import UnexpectedProjectRelation, InvalidProjectCommentVoteValue
+from .exceptions import UnexpectedProjectRelation, InvalidProjectCommentVoteValue, OwnCommentVoting
 from ...db import Model
 from ...models import User
 
@@ -43,14 +43,20 @@ class ProjectComment(Model):
 
         return self.__score
 
+    def __vote(self, user_id: int, value: int) -> None:
+        if user_id == self.author_user_id:
+            raise OwnCommentVoting
+
+        ProjectCommentVote.upsert(self.session, self.id, user_id, value)
+
     def upvote(self, user_id: int) -> None:
-        ProjectCommentVote.upsert(self.session, self.id, user_id, ProjectCommentVote.UPVOTE)
+        self.__vote(user_id, ProjectCommentVote.UPVOTE)
 
     def downvote(self, user_id: int) -> None:
-        ProjectCommentVote.upsert(self.session, self.id, user_id, ProjectCommentVote.DOWNVOTE)
+        self.__vote(user_id, ProjectCommentVote.DOWNVOTE)
 
     def annul_vote(self, user_id: int) -> None:
-        ProjectCommentVote.upsert(self.session, self.id, user_id, ProjectCommentVote.ANNUL)
+        self.__vote(user_id, ProjectCommentVote.ANNUL)
 
 
 class ProjectCommentVote(Model):

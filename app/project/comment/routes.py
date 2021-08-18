@@ -2,7 +2,7 @@ from flask.json import jsonify
 from flask_classy import FlaskView, route
 from sqlalchemy.orm.scoping import scoped_session
 
-from .exceptions import UnexpectedProjectRelation
+from .exceptions import UnexpectedProjectRelation, OwnCommentVoting
 from .models import ProjectComment
 from .schemas import post_comment_schema, put_comment_schema
 from ..decorators import comment_authorship_required
@@ -78,23 +78,32 @@ class CommentVotes(FlaskView):
     @user_required
     @route('/comments/<int:comment_id>/votes/up', methods=['POST'])
     def up(self, user_id: int, comment_id: int):
-        comment: ProjectComment = self.session.query(ProjectComment).filter(ProjectComment.id == comment_id).one()
-        comment.upvote(user_id)
+        try:
+            comment: ProjectComment = self.session.query(ProjectComment).filter(ProjectComment.id == comment_id).one()
+            comment.upvote(user_id)
+        except OwnCommentVoting:
+            return jsonify(), 400
 
         return jsonify(), 200
 
     @user_required
     @route('/comments/<int:comment_id>/votes/down', methods=['POST'])
     def down(self, user_id: int, comment_id: int):
-        comment: ProjectComment = self.session.query(ProjectComment).filter(ProjectComment.id == comment_id).one()
-        comment.downvote(user_id)
+        try:
+            comment: ProjectComment = self.session.query(ProjectComment).filter(ProjectComment.id == comment_id).one()
+            comment.downvote(user_id)
+        except OwnCommentVoting:
+            return jsonify(), 400
 
         return jsonify(), 200
 
     @user_required
     @route('/comments/<int:comment_id>/votes/annul', methods=['POST'])
     def annul(self, user_id: int, comment_id: int):
-        comment: ProjectComment = self.session.query(ProjectComment).filter(ProjectComment.id == comment_id).one()
-        comment.annul_vote(user_id)
+        try:
+            comment: ProjectComment = self.session.query(ProjectComment).filter(ProjectComment.id == comment_id).one()
+            comment.annul_vote(user_id)
+        except OwnCommentVoting:
+            return jsonify(), 400
 
         return jsonify(), 200
