@@ -1,74 +1,94 @@
+import os
 from flask.json import jsonify
 from app import db
-from flask import redirect, request, render_template
+from flask import redirect, request
 from flask_classy import FlaskView, route
 from app.account import bp
 from app.auth.decorators import check_auth
-from app.decorators import request_is_json
+from app.decorators import request_validation_required
 from app.auth.utils import get_auth_instance
 from app.models import User
 from app import mail
 from flask_mail import Message
-from app.responses import DefaultResponses
+from .schemas import post_settings_schema, post_delete_account_schema
+from werkzeug.utils import secure_filename
 
 class Account(FlaskView):
-
+    
+    UPLOAD_FOLDER = '/path/to/upload'
     #получение данных пользователя
     @check_auth
     def get(self):
-        id, claims = get_auth_instance().get_current_user_data_from_token()   
-        return jsonify(claims), 200        
+        uid, claims = get_auth_instance().get_current_user_data_from_token()   
+        avatar = User.query.filter_by(id = uid).first().avatar
 
-    #получение/заполнение формы с данными пользователя
+        result = claims
+        result['avatar'] = avatar
+
+        return jsonify(result), 200        
+
+
     @check_auth
-    @route("/settings/", methods=["GET", "POST"])
-    def set_account(self):        
-        uid, claims = get_auth_instance().get_current_user_data_from_token()
-        if request.method == 'POST':
-            #TODO: написать загрузку аватарки            
-            
-            if request.json.get("delete"):
-                return redirect('/delete/'), 303
-                       
-            user = User.query.filter_by(id = uid).first()
-            user.nickname = request.json.get("nickname")
-            user.first_name = request.json.get("first_name")
-            user.last_name = request.json.get("last_name")
-            user.email = request.json.get("email")
-            user.telegram_nickname = request.json.get("telegram_nickname")
-            db.session.commit()
-            
-            return redirect('/settings/'), 303
+    @request_validation_required(post_settings_schema)
+    @route('/settings/', methods=['POST'])
+    def post_settings(self, validated_request: dict):        
+        uid, claims = get_auth_instance().get_current_user_data_from_token()       
 
-        return jsonify(nickname=claims['nickname'], first_name=claims['first_name'],
-        last_name=claims['last_name'], email=claims['email'],
-        telegram_nickname=claims['telegram_nickname']), 200
+        #file = request.files['file']
+        #filename = secure_filename(file.filename)
+        #file.save(os.path.join(self.UPLOAD_FOLDER, filename))
+
+        user = User.query.filter_by(id = uid).first()
+        user.nickname = validated_request.get('nickname')
+        user.first_name = validated_request.get('first_name')
+        user.last_name = validated_request.get('last_name')
+        user.email = validated_request.get('email')
+        user.telegram_nickname = validated_request.get('telegram_nickname')
+        user.avatar = validated_request.get('avatar')
+        db.session.commit()
+
+        return redirect('/settings/'), 303
+
+
+    @check_auth
+    @route('/settings/', methods=['GET'])
+    def get_settings(self):
+        uid, claims = get_auth_instance().get_current_user_data_from_token()
+        avatar = User.query.filter_by(id = uid).first().avatar
+
+        result = claims
+        result['avatar'] = avatar
+
+        return jsonify(result), 200
+
 
     #удаление аккаунта пользователя с сообщением о причине
-    @check_auth    
-    @route('/delete/', methods=["GET", "POST"])
-    def delete_account(self):
+    @check_auth  
+    @request_validation_required(post_delete_account_schema)  
+    @route('/delete/', methods=['POST'])
+    def post_delete(self, validated_request: dict):
         uid, claims = get_auth_instance().get_current_user_data_from_token() 
-        if request.method == 'POST':
 
-            user_message = request.json.get("user_message")
+        user_message = validated_request.get('user_message')
                                    
-            msg = Message("Сообщение об удалении аккаунта пользователем %s" % claims['nickname'],
+        msg = Message('Сообщение об удалении аккаунта пользователем %s' % claims['nickname'],
                 recipients=['justbeginnoreply@gmail.com'])
-            msg.body = user_message
-            mail.send(msg)
+        msg.body = user_message
+        mail.send(msg)
 
-            user = User.query.filter_by(id = uid).first()
-            db.session.delete(user)
-            db.session.commit()
+        user = User.query.filter_by(id = uid).first()
+        db.session.delete(user)
+        db.session.commit()
 
-            return redirect("/home/"), 303
+        return redirect('/home/'), 303
 
-        return jsonify(nickname = claims["nickname"]), 200
+    
+    @check_auth
+    @route('/delete/', methods=['GET'])
+    def get_delete_page(self):
+        uid, claims = get_auth_instance().get_current_user_data_from_token()
+
+        return jsonify(nickname = claims['nickname']), 200
 
 
 Account.register(bp)
-
-
-
-
