@@ -2,6 +2,7 @@ from random import randint
 
 from app.db import db
 from app.project.comment.models import ProjectComment
+from app.project.story.models import ProjectStory
 from app.project.models import Project
 from tests.functional.auth.utils import create_user
 from tests.utils import random_string
@@ -44,3 +45,17 @@ def upvote_comment(comment: ProjectComment, times: int = None) -> int:
         comment.upvote(create_user().id)
 
     return score
+
+
+def create_project_story(project_id: int = None, author_user_id: int = None, title: str = None, content: str = None) -> ProjectStory:
+    story = ProjectStory(
+        project_id or create_project().id,
+        author_user_id or create_user().id,
+        title or random_string(63),
+        content or random_string(1024),
+    )
+
+    db.session.add(story)
+    db.session.commit()
+
+    return story

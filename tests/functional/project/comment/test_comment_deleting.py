@@ -1,3 +1,5 @@
+from random import randint
+
 from app.project.comment.models import ProjectComment
 from tests.functional.auth.utils import sign_in
 from tests.functional.base import BaseTestCase
@@ -33,3 +35,12 @@ class ProjectCommentDeleting(BaseTestCase):
 
             assert response.status_code == 403
             assert self.session.query(ProjectComment).get(comment.id) is not None
+
+    def test_user_cannot_delete_nonexistent_comment(self) -> None:
+        with self.app.test_client() as client:
+            sign_in(client)
+            nonexistent_comment_id = randint(1, 100)
+
+            response = client.delete(f'/projects/comments/{nonexistent_comment_id}')
+
+            assert response.status_code == 404

@@ -1,4 +1,5 @@
 import json
+from random import randint
 
 from app.project.comment.models import ProjectComment
 from tests.functional.auth.utils import sign_in
@@ -47,9 +48,8 @@ class ProjectCommentCreating(BaseTestCase):
     def test_unauthorized_user_cannot_create_comment(self) -> None:
         with self.app.test_client() as client:
             project = create_project()
-            comment_content = random_string(256)
 
-            request_data = {'content': comment_content}
+            request_data = {'content': random_string(256)}
             response = client.post(f'/projects/{project.id}/comments', data=request_data)
 
             assert response.status_code == 401
@@ -73,3 +73,14 @@ class ProjectCommentCreating(BaseTestCase):
             response = client.post(f'/projects/{another_project.id}/comments', data=request_data)
 
             assert response.status_code == 400
+
+    def test_user_cannot_leave_comment_on_nonexistent_project(self) -> None:
+        with self.app.test_client() as client:
+            sign_in(client)
+            nonexistent_project_id = randint(1, 100)
+
+            request_data = {'content': random_string(256)}
+
+            response = client.post(f'/projects/{nonexistent_project_id}/comments', data=request_data)
+
+            assert response.status_code == 404

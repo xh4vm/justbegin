@@ -7,6 +7,7 @@ from sqlalchemy.ext.declarative.api import declared_attr
 from sqlalchemy.orm.scoping import scoped_session
 
 db = SQLAlchemy()
+ModelId = BigInteger().with_variant(Integer, 'sqlite')
 
 
 class Model(db.Model):
@@ -14,7 +15,7 @@ class Model(db.Model):
 
     session: scoped_session = db.session
 
-    id: int = Column(BigInteger().with_variant(Integer, 'sqlite'), nullable=False, unique=True, primary_key=True)
+    id: int = Column(ModelId, nullable=False, unique=True, primary_key=True)
     created_at: datetime = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow)
     updated_at: datetime = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 

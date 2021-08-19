@@ -3,18 +3,18 @@ from sqlalchemy.event import listens_for
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.scoping import scoped_session
 from sqlalchemy.sql.functions import sum, coalesce
-from sqlalchemy.sql.sqltypes import String, Integer, SmallInteger
+from sqlalchemy.sql.sqltypes import String, SmallInteger
 
 from .exceptions import UnexpectedProjectRelation, InvalidProjectCommentVoteValue, OwnCommentVoting
-from ...db import Model
+from ...db import Model, ModelId
 from ...models import User
 
 
 class ProjectComment(Model):
-    project_id: int = Column(Integer, ForeignKey('projects.id'), nullable=False)
-    author_user_id: int = Column(Integer, ForeignKey('users.id'), nullable=False)
+    project_id: int = Column(ModelId, ForeignKey('projects.id'), nullable=False)
+    author_user_id: int = Column(ModelId, ForeignKey('users.id'), nullable=False)
     content: str = Column(String, nullable=False)
-    parent_comment_id: int = Column(Integer, ForeignKey('project_comments.id'), nullable=True)
+    parent_comment_id: int = Column(ModelId, ForeignKey('project_comments.id'), nullable=True)
 
     author: User = relationship('User')
     replies = relationship('ProjectComment', order_by='ProjectComment.created_at')
@@ -68,8 +68,8 @@ class ProjectCommentVote(Model):
         UniqueConstraint('comment_id', 'user_id', name='single_vote_per_user'),
     )
 
-    comment_id: int = Column(Integer, ForeignKey('project_comments.id', ondelete='CASCADE'), nullable=False)
-    user_id: int = Column(Integer, ForeignKey('users.id'), nullable=False)
+    comment_id: int = Column(ModelId, ForeignKey('project_comments.id', ondelete='CASCADE'), nullable=False)
+    user_id: int = Column(ModelId, ForeignKey('users.id'), nullable=False)
     value: int = Column(SmallInteger, nullable=False)
 
     def __init__(self, project_comment_id: int, user_id: int, value: int) -> None:
