@@ -6,12 +6,13 @@ from sqlalchemy.sql.functions import func
 from app import db
 from app.auth.decorators import check_auth
 from app.auth.utils import get_auth_instance
-from app.decorators import request_is_json
+from app.decorators import request_is_json, request_validation_required
 from app.project.models import FavoriteProject
 from app.project.decorators import verify_authorship
 from app.project.responses import ProjectResponses
 from .models import Project
 from .serializers import serialize_project
+from .schemas import post_like_schema
 
 
 class Projects(FlaskView):
@@ -43,9 +44,10 @@ class Projects(FlaskView):
 
     @check_auth
     @route('/like/', methods=['POST'])
-    def like(self):
+    @request_validation_required(post_like_schema)
+    def like(self, validated_request: dict):
         id, claims = get_auth_instance().get_current_user_data_from_token()
-        project_id = request.form.get('project_id')
+        project_id = validated_request.get('project_id')
 
         project = Project.query.get(project_id)
 
