@@ -1,4 +1,5 @@
-from sqlalchemy.orm import relationship, backref
+from .comment.models import ProjectComment
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import Column, ForeignKey
 from sqlalchemy.sql.sqltypes import String, Integer
 
@@ -11,7 +12,7 @@ class Project(Model):
     description: str = Column(String, nullable=False)
     website: str = Column(String(1024), nullable=True)
 
-    comments = relationship('ProjectComment')
+    comments : ProjectComment = relationship('ProjectComment')
 
     def __init__(self, title: str, description: str, website: str = None) -> None:
         self.title = title

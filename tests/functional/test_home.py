@@ -1,7 +1,6 @@
 import json
-from app.home import responses
 from tests.functional.base import BaseTestCase
-from app.home.responses import HomeResponses
+from app.home.exceptions import HomeExceptions
 
 
 # class HomeTestCase(BaseTestCase):

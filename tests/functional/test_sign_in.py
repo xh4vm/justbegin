@@ -1,7 +1,7 @@
 import json
 from tests.functional.TestAuth import TestAuth
 from tests.functional.base import BaseTestCase
-from app.auth.responses import AuthResponses
+from app.auth.exceptions import AuthExceptions
 from tests.functional.header import Header
 from tests.functional.mocks.sign_up import *
 
@@ -13,7 +13,7 @@ class SignInTestCase(BaseTestCase, TestAuth):
         with self.app.test_client() as test_client:
             response = test_client.post('/auth/sign_in/', data="asd")
             assert response.status_code == 400
-            assert json.loads(response.data) == AuthResponses.BAD_DATA_TYPE
+            assert json.loads(response.data) == AuthExceptions.BAD_DATA_TYPE
 
     def test_sign_in_success_jwt(self):
 
@@ -43,7 +43,7 @@ class SignInTestCase(BaseTestCase, TestAuth):
             }), headers=Header.json)
 
             assert response.status_code == 400
-            assert json.loads(response.data) == AuthResponses.BAD_AUTH_DATA
+            assert json.loads(response.data) == AuthExceptions.BAD_AUTH_DATA
 
     def test_sign_in_already_auth(self):
 
@@ -61,6 +61,6 @@ class SignInTestCase(BaseTestCase, TestAuth):
             }), headers=Header.json)
 
             assert response.status_code == 208
-            assert json.loads(response.data) == AuthResponses.ALREADY_AUTH
+            assert json.loads(response.data) == AuthExceptions.ALREADY_AUTH
 
     

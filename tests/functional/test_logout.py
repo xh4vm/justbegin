@@ -4,7 +4,6 @@ from werkzeug.wrappers.base_request import _assert_not_shallow
 from tests.functional.TestAuth import TestAuth
 from flask import request
 from tests.functional.base import BaseTestCase
-from app.auth.responses import AuthResponses
 from tests.functional.header import Header
 from tests.functional.mocks.sign_up import SignUpMeMock
 

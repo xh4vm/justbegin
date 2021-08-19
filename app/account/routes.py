@@ -9,7 +9,7 @@ from app.auth.utils import get_auth_instance
 from app.models import User
 from app import mail
 from flask_mail import Message
-from app.responses import DefaultResponses
+from app.exceptions import DefaultExceptions
 
 class Account(FlaskView):
 

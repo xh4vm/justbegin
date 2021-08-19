@@ -9,7 +9,8 @@ def serialize_project(project: Project) -> dict:
         'id': project.id,
         'title': project.title,
         'description': project.description,
-        'website': project.website
+        'website': project.website,
+        'created_at': project.created_at
     }
 
 

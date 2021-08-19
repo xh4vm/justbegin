@@ -5,7 +5,7 @@ from flask_jwt_extended.utils import get_jwt_claims
 from flask_jwt_extended.view_decorators import jwt_refresh_token_required, jwt_required, jwt_optional
 from app import db, mail
 from app.models import User
-from app.auth.responses import AuthResponses
+from app.auth.exceptions import AuthExceptions
 from flask_jwt_extended import create_access_token, set_access_cookies, unset_jwt_cookies, get_jwt_identity, verify_jwt_in_request
 from app.auth.methods import IAuth
 from flask_mail import Message
@@ -41,7 +41,7 @@ class JWTAuth(IAuth):
         user = User.query.with_entities(User).filter_by(email=email).first()
 
         if user is None or not user.check_password(password):
-            return jsonify(AuthResponses.BAD_AUTH_DATA), 400
+            return jsonify(AuthExceptions.BAD_AUTH_DATA), 400
 
         access_token = create_access_token(identity=user)
         response = make_response(redirect('/', code=303))
@@ -53,10 +53,10 @@ class JWTAuth(IAuth):
     @jwt_optional
     def sign_up(self, data: object) -> object:
         if data.get('password') != data.get('confirm_password'):
-            return jsonify(AuthResponses.BAD_CONFIRM_PASSWORD), 400
+            return jsonify(AuthExceptions.BAD_CONFIRM_PASSWORD), 400
 
         if User.contains_with_email(data.get('email')):
-            return jsonify(AuthResponses.DUPLICATE_EMAIL), 400
+            return jsonify(AuthExceptions.DUPLICATE_EMAIL), 400
 
         user = User(first_name=data.get('first_name'), last_name=data.get('last_name'),
                     nickname=data.get('nickname'), email=data.get('email'), 
@@ -85,7 +85,7 @@ class JWTAuth(IAuth):
     @jwt_optional
     def reset_password(self, email: str) -> object:
         if not User.contains_with_email(email):
-            return jsonify(AuthResponses.UNKNOWN_USER), 400
+            return jsonify(AuthExceptions.UNKNOWN_USER), 400
 
         user = User.query.with_entities(User).filter_by(email=email).first()
         token = self.get_token(user)
@@ -101,7 +101,7 @@ class JWTAuth(IAuth):
         """
         mail.send(msg)
 
-        return jsonify(AuthResponses.TOKEN_CREATED), 201
+        return "", 201
 
     @jwt_required
     def logout(self) -> object:

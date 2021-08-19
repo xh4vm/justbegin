@@ -1,8 +1,7 @@
-from app import responses
 import json
 from tests.functional.TestAuth import TestAuth
 from tests.functional.base import BaseTestCase
-from app.auth.responses import AuthResponses
+from app.auth.exceptions import AuthExceptions
 from tests.functional.header import Header
 from tests.functional.mocks.sign_up import *
 

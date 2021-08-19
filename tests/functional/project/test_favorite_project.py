@@ -2,7 +2,7 @@ import json
 from tests.functional.auth.utils import sign_in
 
 from app.project.models import FavoriteProject
-from app.project.responses import ProjectResponses
+from app.project.exceptions import ProjectExceptions
 from tests.functional.base import BaseTestCase
 from tests.functional.header import Header
 from tests.functional.project.utils import create_project
@@ -37,23 +37,7 @@ class ProjectFavoriteTestCase(BaseTestCase):
         
             response = test_client.post('/projects/like/', data={"project_id": 2})
             assert response.status_code == 400
-            assert json.loads(response.data) == ProjectResponses.BAD_PROJECT_ID_DATA
-
-    # def test_favorite_project_bad_data_type(self):
-
-    #     with self.app.test_client() as test_client:
-    #         project = create_project()
-    #         SignUpMeMock.init()
-
-    #         response = test_client.post('/auth/sign_in/', data=json.dumps({
-    #             'email': SignUpMeMock.email,
-    #             'password': SignUpMeMock.password,
-    #         }), headers=Header.json)
-
-    #         response = test_client.post('/projects/like/', data="asd")
-
-    #         assert response.status_code == 400
-    #         assert json.loads(response.data) == ProjectResponses.BAD_DATA_TYPE
+            assert json.loads(response.data) == ProjectExceptions.BAD_PROJECT_ID_DATA
 
     def test_favorite_project_like_success(self):
         

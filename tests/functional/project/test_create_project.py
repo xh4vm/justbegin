@@ -9,7 +9,7 @@ class ProjectCreateTestCase(BaseTestCase):
     def test_create_project_check_auth_fail(self):
 
         with self.app.test_client() as test_client:
-            response = test_client.post('/projects/')
+            response = test_client.put('/projects/')
             assert response.status_code == 401
 
     def test_create_project_check_auth_success(self):
@@ -23,6 +23,6 @@ class ProjectCreateTestCase(BaseTestCase):
                 'website': f"{random_string()}.com",
             }
 
-            response = test_client.post('/projects/', data=project_data)
+            response = test_client.put('/projects/', data=project_data)
 
             assert response.status_code == 200

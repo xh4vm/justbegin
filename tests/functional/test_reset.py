@@ -1,8 +1,9 @@
+from app.auth.routes import Auth
 from app.auth.methods.JWTAuth import JWTAuth
 import json
 from tests.functional.TestAuth import TestAuth
 from tests.functional.base import BaseTestCase
-from app.auth.responses import AuthResponses
+from app.auth.exceptions import AuthExceptions
 from tests.functional.header import Header
 from tests.functional.mocks.sign_up import SignUpMeMock
 from app.models import User
@@ -16,7 +17,7 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
         with self.app.test_client() as test_client:
             response = test_client.post('/auth/reset/', data="asd")
             assert response.status_code == 400
-            assert json.loads(response.data) == AuthResponses.BAD_DATA_TYPE
+            assert json.loads(response.data) == AuthExceptions.BAD_DATA_TYPE
 
     def test_reset_already_auth(self):
 
@@ -33,7 +34,7 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
             }), headers=Header.json)
 
             assert response.status_code == 208
-            assert json.loads(response.data) == AuthResponses.ALREADY_AUTH
+            assert json.loads(response.data) == AuthExceptions.ALREADY_AUTH
 
     def test_reset_unknown_user(self):
 
@@ -44,7 +45,7 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
             }), headers=Header.json)
 
             assert response.status_code == 400
-            assert json.loads(response.data) == AuthResponses.UNKNOWN_USER
+            assert json.loads(response.data) == AuthExceptions.UNKNOWN_USER
     
     def test_reset_send_mail_success(self):
 
@@ -56,7 +57,7 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
             }), headers=Header.json)
 
             assert response.status_code == 201
-            assert json.loads(response.data) == AuthResponses.TOKEN_CREATED
+            assert response.data.decode() == ""
 
     def test_reset_password_success_jwt(self):
 
@@ -72,7 +73,7 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
             }), headers=Header.json)
 
             assert response.status_code == 200
-            assert json.loads(response.data) == AuthResponses.RESET_PASSWORD_SUCCESS
+            assert response.data.decode() == ""
             assert user.check_password(new_password) is True
 
     def test_reset_password_token_expired_jwt(self):
@@ -93,7 +94,7 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
             }), headers=Header.json)
 
             assert response.status_code == 408
-            assert json.loads(response.data) == AuthResponses.RESET_TOKENT_EXPIRED
+            assert json.loads(response.data) == AuthExceptions.RESET_TOKENT_EXPIRED
             assert user.password == old_password
 
     def test_reset_password_already_auth_jwt(self):
@@ -115,4 +116,4 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
             }), headers=Header.json)
 
             assert response.status_code == 208
-            assert json.loads(response.data) == AuthResponses.ALREADY_AUTH
+            assert json.loads(response.data) == AuthExceptions.ALREADY_AUTH

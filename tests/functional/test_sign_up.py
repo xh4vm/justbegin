@@ -1,7 +1,7 @@
 import json
 from tests.functional.TestAuth import TestAuth
 from tests.functional.base import BaseTestCase
-from app.auth.responses import AuthResponses
+from app.auth.exceptions import AuthExceptions
 from tests.functional.header import Header
 from tests.functional.mocks.sign_up import *
 
@@ -13,7 +13,7 @@ class SignUpTestCase(BaseTestCase, TestAuth):
         with self.app.test_client() as test_client:
             response = test_client.post('/auth/sign_up/', data="asd")
             assert response.status_code == 400
-            assert json.loads(response.data) == AuthResponses.BAD_DATA_TYPE
+            assert json.loads(response.data) == AuthExceptions.BAD_DATA_TYPE
 
     def test_sign_up_bad_confirm_password(self):
 
@@ -28,7 +28,7 @@ class SignUpTestCase(BaseTestCase, TestAuth):
                 'telegram_nickname': SignUpMock.telegram_nickname
             }), headers=Header.json)
             assert response.status_code == 400
-            assert json.loads(response.data) == AuthResponses.BAD_CONFIRM_PASSWORD
+            assert json.loads(response.data) == AuthExceptions.BAD_CONFIRM_PASSWORD
 
     def test_sign_up_success_jwt(self):
 
@@ -74,7 +74,7 @@ class SignUpTestCase(BaseTestCase, TestAuth):
             }), headers=Header.json)
 
             assert response.status_code == 208
-            assert json.loads(response.data) == AuthResponses.ALREADY_AUTH
+            assert json.loads(response.data) == AuthExceptions.ALREADY_AUTH
 
     def test_sign_up_duplicate_email(self):
 
@@ -92,4 +92,4 @@ class SignUpTestCase(BaseTestCase, TestAuth):
             }), headers=Header.json)
 
             assert response.status_code == 400
-            assert json.loads(response.data) == AuthResponses.DUPLICATE_EMAIL
+            assert json.loads(response.data) == AuthExceptions.DUPLICATE_EMAIL
