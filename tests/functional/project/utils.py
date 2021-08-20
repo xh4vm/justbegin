@@ -2,8 +2,9 @@ from random import randint
 
 from app.db import db
 from app.project.comment.models import ProjectComment
-from app.project.story.models import ProjectStory
+from app.project.follower.models import ProjectFollower
 from app.project.models import Project
+from app.project.story.models import ProjectStory
 from tests.functional.auth.utils import create_user
 from tests.utils import random_string
 
@@ -59,3 +60,15 @@ def create_project_story(project_id: int = None, author_user_id: int = None, tit
     db.session.commit()
 
     return story
+
+
+def create_project_follower(user_id: int = None, project_id: int = None) -> ProjectFollower:
+    follower = ProjectFollower(
+        user_id or create_user().id,
+        project_id or create_project().id,
+    )
+
+    db.session.add(follower)
+    db.session.commit()
+
+    return follower

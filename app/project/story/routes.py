@@ -23,6 +23,11 @@ class ProjectStories(FlaskView):
         return jsonify(list(map(serialize_project_story, project.stories))), 200
 
     @user_required
+    @route('/stories', methods=['GET'])
+    def timeline(self, user: User) -> tuple:
+        return jsonify(list(map(serialize_project_story, user.followed_project_stories))), 200
+
+    @user_required
     @project_required
     @request_validation_required(post_project_story_schema)
     @route('/<int:project_id>/stories', methods=['POST'])

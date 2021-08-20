@@ -5,6 +5,7 @@ from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import String
 
 from .comment.models import ProjectComment
+from .follower.models import ProjectFollower
 from .story.exceptions import InvalidProjectStoryAuthorRole
 from .story.models import ProjectStory
 from ..db import Model
@@ -50,3 +51,23 @@ class Project(Model):
         self.session.commit()
 
         return story
+
+    def follow(self, user: User) -> None:
+        follower = (ProjectFollower.query
+                    .filter(ProjectFollower.user_id == user.id, ProjectFollower.project_id == self.id)
+                    .first())
+
+        if follower is not None:
+            return
+
+        self.session.add(ProjectFollower(user.id, self.id))
+        self.session.commit()
+
+    def unfollow(self, user: User) -> None:
+        follower = (ProjectFollower.query
+                    .filter(ProjectFollower.user_id == user.id, ProjectFollower.project_id == self.id)
+                    .first())
+
+        if follower is not None:
+            self.session.delete(follower)
+            self.session.commit()

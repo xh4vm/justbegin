@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, jwt
@@ -19,6 +20,12 @@ class User(db.Model):
     password = db.Column(db.String(128), nullable=False)
     avatar = db.Column(db.String(128), nullable=True)
     telegram_nickname = db.Column(db.String(32), nullable=False, unique=True)
+
+    followed_project_stories = relationship('ProjectStory',
+                                            secondary='join(Project, ProjectFollower,'
+                                                      'Project.id == ProjectFollower.project_id)',
+                                            order_by='ProjectStory.created_at.desc()',
+                                            viewonly=True)
 
     def __init__(self, nickname, email, password, telegram_nickname, avatar=None, first_name=None, last_name=None):
         self.nickname = nickname
