@@ -38,13 +38,13 @@ class AccountTestCase(BaseTestCase, TestAuth):
         with self.app.test_client() as test_client:
             sign_in(test_client)
             
-            response = test_client.post('/account/settings/', data={
+            response = test_client.post('/account/settings/', data=json.dumps({
                 'nickname': 'new_nickname',
                 'first_name': 'new_first_name',
                 'last_name': 'new_last_name',
                 'email': 'new_email@test.py',
                 'telegram_nickname': 'new_telegram_nickname',
-            })
+            }), headers=Header.json)
 
             assert response.status_code == 303                       
             user = User.query.filter_by(nickname = 'new_nickname').first()
@@ -71,9 +71,9 @@ class AccountTestCase(BaseTestCase, TestAuth):
         with self.app.test_client() as test_client:
             user = sign_in(test_client)
 
-            response = test_client.post('/account/delete/', data={
+            response = test_client.post('/account/delete/', data=json.dumps({
                 'user_message': 'my dream is dead...',
-            })
+            }), headers=Header.json)
 
             assert response.status_code == 303
             assert self.session.query(User.id).filter_by(nickname = user.nickname).first() is None

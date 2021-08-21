@@ -89,5 +89,3 @@ class Account(FlaskView):
         uid, claims = get_auth_instance().get_current_user_data_from_token()
 
         return jsonify(nickname = claims['nickname']), 200
-
-Account.register(bp)
