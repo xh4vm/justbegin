@@ -1,3 +1,4 @@
+from app.utils.request_type.JSON import JSON
 from sqlalchemy.orm.scoping import scoped_session
 from app.auth.methods import IAuth
 from datetime import datetime
@@ -25,7 +26,7 @@ class Auth(FlaskView):
         return instance.sign_in(email=validated_request.get("email"), password=validated_request.get("password"))
 
     @route('/sign_up/', methods=["PUT"])
-    @request_validation_required(put_user_schema)
+    @request_validation_required(put_user_schema, JSON)
     @already_auth(response=AuthExceptions.ALREADY_AUTH, code=208)
     def sign_up(self, validated_request : dict):
         data : dict = {
