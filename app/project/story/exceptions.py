@@ -1,0 +1,2 @@
+class InvalidProjectStoryAuthorRole(Exception):
+    pass

@@ -1,3 +1,4 @@
+from app.auth.models import User
 from flask import request, jsonify
 from flask_classy import FlaskView, route
 from sqlalchemy.orm.scoping import scoped_session
@@ -40,7 +41,7 @@ class Projects(FlaskView):
     @user_required
     @route('/like/', methods=['POST'])
     @request_validation_required(post_like_schema)
-    def like(self, user_id : int, validated_request: dict):
+    def like(self, user : User, validated_request: dict):
         project_id = validated_request.get('project_id')
 
         project = Project.query.get(project_id)
@@ -48,7 +49,7 @@ class Projects(FlaskView):
         if project is None:
             return jsonify(ProjectExceptions.BAD_PROJECT_ID_DATA), 400
 
-        status = project.like(user_id)
+        status = project.like(user.id)
 
         return jsonify({"status": "success", "count": project.get_count_likes(), "active": status}), 200
 

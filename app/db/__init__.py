@@ -7,6 +7,7 @@ from sqlalchemy.ext.declarative.api import declared_attr
 from sqlalchemy.orm.scoping import scoped_session
 
 db = SQLAlchemy()
+ModelId = BigInteger().with_variant(Integer, 'sqlite')
 
 
 class BaseModel(db.Model):
@@ -26,5 +27,5 @@ class BaseModel(db.Model):
 
 class Model(BaseModel):
     __abstract__ = True
-    
+
     id: int = Column(BigInteger().with_variant(Integer, 'sqlite'), nullable=False, unique=True, primary_key=True)

@@ -1,3 +1,4 @@
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql.sqltypes import String, Integer
 from sqlalchemy.sql.schema import Column
 from ..db import Model
@@ -15,6 +16,12 @@ class User(Model):
     password = Column(String(128), nullable=False)
     avatar = Column(String(128), nullable=True)
     telegram_nickname = Column(String(32), nullable=False, unique=True)
+
+    followed_project_stories = relationship('ProjectStory',
+                                        secondary='join(Project, ProjectFollower,'
+                                                    'Project.id == ProjectFollower.project_id)',
+                                        order_by='ProjectStory.created_at.desc()',
+                                        viewonly=True)
 
     def __init__(self, nickname, email, password, telegram_nickname, avatar=None, first_name=None, last_name=None):
         self.nickname = nickname

@@ -1,3 +1,5 @@
+from random import randint
+
 from tests.functional.auth.utils import sign_in
 from tests.functional.base import BaseTestCase
 from tests.functional.project.utils import create_project_comment
@@ -55,4 +57,12 @@ class ProjectCommentUpdate(BaseTestCase):
             self.session.refresh(comment)
 
             assert comment.content == expected_comment_content
-            
+
+    def test_user_cannot_update_nonexistent_comment(self) -> None:
+        with self.app.test_client() as client:
+            sign_in(client)
+            nonexistent_comment_id = randint(1, 100)
+
+            response = client.put(f'/projects/comments/{nonexistent_comment_id}', data={'content': random_string(256)})
+
+            assert response.status_code == 404

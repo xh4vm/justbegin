@@ -1,9 +1,10 @@
 from random import randint
-from tests.functional.header import Header
 
 from app.db import db
 from app.project.comment.models import ProjectComment
+from app.project.follower.models import ProjectFollower
 from app.project.models import Project
+from app.project.story.models import ProjectStory
 from tests.functional.auth.utils import create_user
 from tests.utils import random_string
 
@@ -46,3 +47,28 @@ def upvote_comment(comment: ProjectComment, times: int = None) -> int:
 
     return score
 
+
+def create_project_story(project_id: int = None, author_user_id: int = None, title: str = None, content: str = None) -> ProjectStory:
+    story = ProjectStory(
+        project_id or create_project().id,
+        author_user_id or create_user().id,
+        title or random_string(63),
+        content or random_string(1024),
+    )
+
+    db.session.add(story)
+    db.session.commit()
+
+    return story
+
+
+def create_project_follower(user_id: int = None, project_id: int = None) -> ProjectFollower:
+    follower = ProjectFollower(
+        user_id or create_user().id,
+        project_id or create_project().id,
+    )
+
+    db.session.add(follower)
+    db.session.commit()
+
+    return follower

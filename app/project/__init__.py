@@ -1,10 +1,14 @@
 from flask import Blueprint
 
-from .comment.routes import Comments, CommentUpvotes
+from .comment.routes import ProjectComments, ProjectCommentVotes
+from .follower.routes import ProjectFollowers
 from .routes import Projects
+from .story.routes import ProjectStories
 
 bp = Blueprint('projects', __name__, url_prefix='/projects')
 
 Projects.register(bp, route_base='/')
-Comments.register(bp, route_base='/')
-CommentUpvotes.register(bp, route_base='/')
+ProjectComments.register(bp, route_base='/')
+ProjectCommentVotes.register(bp, route_base='/')
+ProjectFollowers.register(bp, route_base='/')
+ProjectStories.register(bp, route_base='/')

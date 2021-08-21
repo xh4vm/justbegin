@@ -1,7 +1,8 @@
 from typing import List
 
-from app.project.comment.models import ProjectComment, ProjectCommentVote
+from app.project.comment.models import ProjectComment
 from app.project.models import Project
+from app.project.story.models import ProjectStory
 
 
 def serialize_project(project: Project) -> dict:
@@ -9,8 +10,7 @@ def serialize_project(project: Project) -> dict:
         'id': project.id,
         'title': project.title,
         'description': project.description,
-        'website': project.website,
-        'created_at': project.created_at
+        'website': project.website
     }
 
 
@@ -24,7 +24,22 @@ def serialize_project_comments(comments: List[ProjectComment]) -> list:
             'content': comment.content,
             'score': comment.score,
             'replies': serialize_project_comments(comment.replies),
-            'created_at': comment.created_at
+            'created_at': comment.created_at,
+            'updated_at': comment.updated_at,
         })
 
     return sorted(result, key=lambda c: c['score'], reverse=True)
+
+
+def serialize_project_story(story: ProjectStory) -> dict:
+    return {
+        'id': story.id,
+        'author': {
+            'id': story.author.id,
+            'name': story.author.nickname,
+        },
+        'title': story.title,
+        'content': story.content,
+        'created_at': story.created_at,
+        'updated_at': story.updated_at,
+    }

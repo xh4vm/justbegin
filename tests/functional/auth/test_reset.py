@@ -30,17 +30,15 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
             assert response.status_code == 400
             assert json.loads(response.data) == AuthExceptions.UNKNOWN_USER
     
-    # def test_reset_send_mail_success(self):
+    def test_reset_send_mail_success(self):
 
-    #     with self.app.test_client() as test_client:
-    #         SignUpMeMock.init()
+        with self.app.test_client() as test_client:
+            user = create_user()
 
-    #         response = test_client.post('/auth/reset/', data=json.dumps({
-    #             'email': SignUpMeMock.email,
-    #         }), headers=Header.json)
+            response = test_client.post('/auth/reset/', data={'email': user.email})
 
-    #         assert response.status_code == 201
-    #         assert response.data.decode() == ""
+            assert response.status_code == 201
+            assert response.data.decode() == ""
 
     def test_reset_password_success_jwt(self):
 
