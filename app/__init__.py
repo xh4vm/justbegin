@@ -7,8 +7,6 @@ from flask_migrate import Migrate
 from flask_redis import FlaskRedis
 from flask_socketio import SocketIO
 
-from app.jinja_functions import *
-
 from .db import db
 
 migrate = Migrate()

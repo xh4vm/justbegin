@@ -1,13 +1,12 @@
-import os
+from ..utils.request_type.JSON import JSON
 from flask.json import jsonify
 from app import db
 from flask import redirect, request
 from flask_classy import FlaskView, route
-from app.account import bp
 from app.auth.decorators import check_auth
 from app.decorators import request_validation_required
 from app.auth.utils import get_auth_instance
-from app.models import User
+from app.auth.models import User
 from app import mail
 from flask_mail import Message
 from .schemas import post_settings_schema, post_delete_account_schema
@@ -29,7 +28,7 @@ class Account(FlaskView):
 
 
     @check_auth
-    @request_validation_required(post_settings_schema)
+    @request_validation_required(post_settings_schema, JSON)
     @route('/settings/', methods=['POST'])
     def post_settings(self, validated_request: dict):        
         uid, claims = get_auth_instance().get_current_user_data_from_token()       
@@ -64,7 +63,8 @@ class Account(FlaskView):
 
     #удаление аккаунта пользователя с сообщением о причине
     @check_auth  
-    @request_validation_required(post_delete_account_schema)  
+
+    @request_validation_required(post_delete_account_schema, JSON)  
     @route('/delete/', methods=['POST'])
     def post_delete(self, validated_request: dict):
         uid, claims = get_auth_instance().get_current_user_data_from_token() 
@@ -89,6 +89,3 @@ class Account(FlaskView):
         uid, claims = get_auth_instance().get_current_user_data_from_token()
 
         return jsonify(nickname = claims['nickname']), 200
-
-
-Account.register(bp)

@@ -10,12 +10,11 @@ db = SQLAlchemy()
 ModelId = BigInteger().with_variant(Integer, 'sqlite')
 
 
-class Model(db.Model):
+class BaseModel(db.Model):
     __abstract__ = True
 
     session: scoped_session = db.session
 
-    id: int = Column(ModelId, nullable=False, unique=True, primary_key=True)
     created_at: datetime = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow)
     updated_at: datetime = Column(TIMESTAMP(timezone=True), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -25,3 +24,8 @@ class Model(db.Model):
 
     def __repr__(self):
         return "<{0.__class__.__name__}(id={0.id!r})>".format(self)
+
+class Model(BaseModel):
+    __abstract__ = True
+
+    id: int = Column(BigInteger().with_variant(Integer, 'sqlite'), nullable=False, unique=True, primary_key=True)

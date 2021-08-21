@@ -1,5 +1,6 @@
 from flask import Blueprint
+from .routes import Account
 
-bp = Blueprint('account', __name__)
+bp = Blueprint('account', __name__, url_prefix='/account')
 
-from app.account import routes
+Account.register(bp, route_base='/')

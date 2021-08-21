@@ -1,11 +1,8 @@
-from string import Template
-
-from app.responses import DefaultResponses
+from app.exceptions import DefaultExceptions
 
 
-class ProjectResponses(DefaultResponses):
+class ProjectExceptions(DefaultExceptions):
     BAD_PROJECT_ID_DATA = {"status": "fail", "message": "Неверный идентификатор проекта."}
     IS_NOT_PROJECT_ADMIN = {"status": "fail", "message": "Пользователь не является основателем проекта."}
-    SUCCESS_REMOVE = {'status': 'success', 'message': Template('Проект $title был успешно удален.')}
 
     

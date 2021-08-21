@@ -8,7 +8,7 @@ class PostCommentSchema(Schema):
 
 class PutCommentSchema(Schema):
     content = fields.String(required=True)
-
+    
 
 post_comment_schema = PostCommentSchema()
 put_comment_schema = PutCommentSchema()

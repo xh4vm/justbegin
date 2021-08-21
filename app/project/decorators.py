@@ -4,7 +4,7 @@ from flask import jsonify, request, abort
 
 from .comment.models import ProjectComment
 from .models import Project
-from .responses import ProjectResponses
+from .exceptions import ProjectExceptions
 from .story.models import ProjectStory
 from ..auth.utils import get_auth_instance
 from ..models import ProjectCreator
@@ -15,13 +15,13 @@ def verify_authorship(request_key: str):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             id, claims = get_auth_instance().get_current_user_data_from_token()
-            project_id = request.json.get(request_key)
+            project_id = request.form.get(request_key)
 
             if Project.query.get(project_id) is not None:
                 if ProjectCreator.query.get((id, project_id)) is None:
-                    return jsonify(ProjectResponses.IS_NOT_PROJECT_ADMIN), 400
+                    return jsonify(ProjectExceptions.IS_NOT_PROJECT_ADMIN), 400
             else:
-                return jsonify(ProjectResponses.BAD_PROJECT_ID_DATA), 400
+                return jsonify(ProjectExceptions.BAD_PROJECT_ID_DATA), 400
 
             return f(*args, **kwargs)
         return decorated_function

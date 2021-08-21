@@ -4,7 +4,7 @@ from flask_classy import FlaskView, route
 from ..decorators import project_required
 from ..models import Project
 from ...auth.decorators import user_required
-from ...models import User
+from ...auth.models import User
 
 
 class ProjectFollowers(FlaskView):

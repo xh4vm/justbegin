@@ -1,15 +1,16 @@
+from sqlalchemy.sql.functions import func
 from typing import List
 
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql.schema import Column
-from sqlalchemy.sql.sqltypes import String
+from sqlalchemy.sql.schema import Column, ForeignKey
+from sqlalchemy.sql.sqltypes import String, Integer
 
 from .comment.models import ProjectComment
 from .follower.models import ProjectFollower
 from .story.exceptions import InvalidProjectStoryAuthorRole
 from .story.models import ProjectStory
-from ..db import Model
-from ..models import User
+from ..db import Model, BaseModel
+from app.auth.models import User
 
 
 class Project(Model):
@@ -25,6 +26,27 @@ class Project(Model):
         self.title = title
         self.description = description
         self.website = website
+
+    def _set_like(self, user_id : int) -> bool:
+        self.session.add(
+            FavoriteProject(user_id=user_id, project_id=self.id))
+        self.session.commit()
+        return True
+
+    def _unset_like(self, user_id : int) -> bool:
+        self.session.delete(FavoriteProject.query.get((user_id, self.id)))
+        self.session.commit()
+        return False
+
+    def like(self, user_id : int) -> bool:
+        check_liked_project = FavoriteProject.query.get((user_id, self.id))
+        return self._set_like(user_id) if check_liked_project is None else self._unset_like(user_id)
+
+    def get_count_likes(self):
+        favorites = self.session.query(func.count(FavoriteProject.project_id).label('count'))\
+            .group_by(FavoriteProject.project_id).first()
+
+        return favorites.count if favorites is not None else 0
 
     @property
     def parentless_comments(self) -> List[ProjectComment]:
@@ -71,3 +93,10 @@ class Project(Model):
         if follower is not None:
             self.session.delete(follower)
             self.session.commit()
+            
+
+class FavoriteProject(BaseModel):
+
+    user_id : int = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    project_id : int = Column(Integer, ForeignKey('projects.id'), primary_key=True)
+

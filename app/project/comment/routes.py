@@ -11,7 +11,7 @@ from ..serializers import serialize_project_comments
 from ... import db
 from ...auth.decorators import user_required
 from ...decorators import request_validation_required
-from ...models import User
+from app.auth.models import User
 
 
 class ProjectComments(FlaskView):

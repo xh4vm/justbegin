@@ -1,17 +1,19 @@
+from app.auth.models import User
 from flask import request, jsonify
 from flask_classy import FlaskView, route
 from sqlalchemy.orm.scoping import scoped_session
 from sqlalchemy.sql.functions import func
 
 from app import db
-from app.auth.decorators import check_auth
+from app.auth.decorators import user_required, check_auth
 from app.auth.utils import get_auth_instance
-from app.decorators import request_is_json
-from app.models import FavoriteProject
+from app.decorators import request_is_json, request_validation_required
+from app.project.models import FavoriteProject
 from app.project.decorators import verify_authorship
-from app.project.responses import ProjectResponses
+from .exceptions import ProjectExceptions
 from .models import Project
 from .serializers import serialize_project
+from .schemas import post_like_schema, delete_project_schema, put_project_schema
 
 
 class Projects(FlaskView):
@@ -27,47 +29,29 @@ class Projects(FlaskView):
         return jsonify(list(map(serialize_project, projects))), 200
 
     @check_auth
-    def post(self):
-        project = Project(request.form['title'], request.form['description'], request.form['website'])
+    @request_validation_required(put_project_schema)
+    @route("/", methods=["PUT"])
+    def create(self, validated_request : dict):
+        project = Project(validated_request.get('title'), validated_request.get('description'), validated_request.get('website'))
         self.session.add(project)
         self.session.commit()
 
         return jsonify({'id': project.id}), 200
 
-    @route('/<int:project_id>/')
-    def get_project(self, project_id):
-        id, claims = get_auth_instance().get_current_user_data_from_token()
-
-        project = Project.query.get(project_id)
-        # return render_template('project/index.html', project=project, user=claims)
-        return "шаблон"
-
-    @check_auth
-    @request_is_json(error_message=ProjectResponses.BAD_DATA_TYPE, error_code=400)
+    @user_required
     @route('/like/', methods=['POST'])
-    def like(self):
-        id, claims = get_auth_instance().get_current_user_data_from_token()
-        project_id = request.json.get('project_id')
+    @request_validation_required(post_like_schema)
+    def like(self, user : User, validated_request: dict):
+        project_id = validated_request.get('project_id')
 
         project = Project.query.get(project_id)
 
         if project is None:
-            return jsonify(ProjectResponses.BAD_PROJECT_ID_DATA), 400
+            return jsonify(ProjectExceptions.BAD_PROJECT_ID_DATA), 400
 
-        liked_project = FavoriteProject(user_id=id, project_id=project_id)
-        check_liked_project = FavoriteProject.query.get((id, project_id))
+        status = project.like(user.id)
 
-        if check_liked_project is None:
-            db.session.add(liked_project)
-            active = True
-        else:
-            db.session.delete(
-                FavoriteProject.query.get((liked_project.user_id, liked_project.project_id)))
-            active = False
-
-        db.session.commit()
-
-        return jsonify({"status": "success", "count": len(project.favorites), "active": active}), 200
+        return jsonify({"status": "success", "count": project.get_count_likes(), "active": status}), 200
 
     @route('/status_favorites/', methods=['POST'])
     def status_favorites(self):
@@ -78,20 +62,16 @@ class Projects(FlaskView):
         return jsonify({"status": "success", "projects": projects}), 200
 
     @check_auth
-    @request_is_json(error_message=ProjectResponses.BAD_DATA_TYPE, error_code=400)
     @verify_authorship(request_key='project_id')
-    @route('/remove/', methods=['POST'])
-    def remove(self):
-        project_id = request.json.get('project_id')
-        project = Project.query.get(project_id)
+    @request_validation_required(delete_project_schema)
+    @route('/remove/', methods=['DELETE'])
+    def remove(self, validated_request: dict):
+        project = Project.query.get(validated_request.get('project_id'))
 
         if project is None:
-            return jsonify(ProjectResponses.BAD_PROJECT_ID_DATA), 400
+            return jsonify(ProjectExceptions.BAD_PROJECT_ID_DATA), 400
 
-        db.session.delete(project)
-        db.session.commit()
+        self.session.delete(project)
+        self.session.commit()
 
-        right_response = ProjectResponses.SUCCESS_REMOVE.copy()
-        right_response["message"] = right_response["message"].substitute(title=project.title)
-
-        return jsonify(right_response), 200
+        return "", 200

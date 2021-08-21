@@ -1,12 +1,9 @@
-import json
-
+from tests.functional.auth.utils import sign_in, create_user
 from werkzeug.wrappers.base_request import _assert_not_shallow
 from tests.functional.TestAuth import TestAuth
 from flask import request
 from tests.functional.base import BaseTestCase
-from app.auth.responses import AuthResponses
 from tests.functional.header import Header
-from tests.functional.mocks.sign_up import SignUpMeMock
 
 
 class LogoutTestCase(BaseTestCase, TestAuth):
@@ -20,12 +17,8 @@ class LogoutTestCase(BaseTestCase, TestAuth):
     def test_login_success_jwt(self):
 
         with self.app.test_client() as test_client:
-            SignUpMeMock.init()
-
-            response = test_client.post('/auth/sign_in/', data=json.dumps({
-                'email': SignUpMeMock.email,
-                'password': SignUpMeMock.password,
-            }), headers=Header.json)
+            user = sign_in(test_client)
+            print(user)
 
             response = test_client.get('/auth/logout/')
 
@@ -36,8 +29,4 @@ class LogoutTestCase(BaseTestCase, TestAuth):
             response = test_client.get('/auth/logout/')
 
             assert response.status_code == 401
-
-
-
-
 
