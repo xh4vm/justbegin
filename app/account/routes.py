@@ -63,6 +63,7 @@ class Account(FlaskView):
 
     #удаление аккаунта пользователя с сообщением о причине
     @check_auth  
+
     @request_validation_required(post_delete_account_schema, JSON)  
     @route('/delete/', methods=['POST'])
     def post_delete(self, validated_request: dict):
@@ -89,3 +90,4 @@ class Account(FlaskView):
 
         return jsonify(nickname = claims['nickname']), 200
 
+Account.register(bp)

@@ -3,7 +3,8 @@ from functools import wraps
 
 from flask import jsonify, abort
 
-from app.auth.utils import get_auth_instance
+from .utils import get_auth_instance
+from ..models import User
 
 
 def already_auth(response: str, code: int):

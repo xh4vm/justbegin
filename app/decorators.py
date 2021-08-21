@@ -1,8 +1,8 @@
 from app.utils.request_type.Form import Form
 from app.utils.request_type import IRequestType
 from functools import wraps
-from flask import redirect, jsonify, request
-from app.auth.utils import get_auth_instance
+
+from flask import jsonify, request
 from marshmallow import Schema, ValidationError
 
 

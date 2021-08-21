@@ -99,3 +99,4 @@ class FavoriteProject(BaseModel):
 
     user_id : int = Column(Integer, ForeignKey('users.id'), primary_key=True)
     project_id : int = Column(Integer, ForeignKey('projects.id'), primary_key=True)
+
