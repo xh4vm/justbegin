@@ -25,7 +25,6 @@ class Projects(FlaskView):
                     .order_by(Project.created_at)
                     .all())
 
-        print(list(map(serialize_project, projects)))
         return jsonify(list(map(serialize_project, projects))), 200
 
     @check_auth
@@ -49,23 +48,9 @@ class Projects(FlaskView):
         if project is None:
             return jsonify(ProjectExceptions.BAD_PROJECT_ID_DATA), 400
 
-        liked_project = FavoriteProject(user_id=user_id, project_id=project_id)
-        check_liked_project = FavoriteProject.query.get((user_id, project_id))
+        status = project.like(user_id)
 
-        if check_liked_project is None:
-            self.session.add(liked_project)
-            active = True
-        else:
-            self.session.delete(
-                FavoriteProject.query.get((liked_project.user_id, liked_project.project_id)))
-            active = False
-
-        self.session.commit()
-
-        favorites = self.session.query(func.count(FavoriteProject.project_id).label('count'))\
-            .group_by(FavoriteProject.project_id).first()
-
-        return jsonify({"status": "success", "count": favorites.count if favorites is not None else 0, "active": active}), 200
+        return jsonify({"status": "success", "count": project.get_count_likes(), "active": status}), 200
 
     @route('/status_favorites/', methods=['POST'])
     def status_favorites(self):

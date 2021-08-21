@@ -4,7 +4,7 @@ from flask.globals import current_app, request
 from flask_jwt_extended.utils import get_jwt_claims
 from flask_jwt_extended.view_decorators import jwt_refresh_token_required, jwt_required, jwt_optional
 from app import db, mail
-from app.models import User
+from app.auth.models import User
 from app.auth.exceptions import AuthExceptions
 from flask_jwt_extended import create_access_token, set_access_cookies, unset_jwt_cookies, get_jwt_identity, verify_jwt_in_request
 from app.auth.methods import IAuth

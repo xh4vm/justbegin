@@ -2,11 +2,9 @@ from flask.json import jsonify
 from app import db
 from flask import redirect, request, render_template
 from flask_classy import FlaskView, route
-from app.account import bp
-from app.auth.decorators import check_auth
-from app.decorators import request_is_json
-from app.auth.utils import get_auth_instance
-from app.models import User
+from ..auth.decorators import check_auth
+from ..auth.utils import get_auth_instance
+from ..auth.models import User
 from app import mail
 from flask_mail import Message
 from app.exceptions import DefaultExceptions
@@ -65,9 +63,6 @@ class Account(FlaskView):
             return redirect("/home/"), 303
 
         return jsonify(nickname = claims["nickname"]), 200
-
-
-Account.register(bp)
 
 
 

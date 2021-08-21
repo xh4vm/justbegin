@@ -55,3 +55,4 @@ class ProjectCommentUpdate(BaseTestCase):
             self.session.refresh(comment)
 
             assert comment.content == expected_comment_content
+            

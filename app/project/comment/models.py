@@ -6,7 +6,7 @@ from sqlalchemy.sql.sqltypes import String, Integer
 
 from .exceptions import UnexpectedProjectRelation
 from ...db import Model
-from ...models import User
+from ...auth.models import User
 
 
 class ProjectComment(Model):

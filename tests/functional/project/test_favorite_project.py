@@ -35,7 +35,7 @@ class ProjectFavoriteTestCase(BaseTestCase):
             sign_in(test_client)
             project = create_project()
         
-            response = test_client.post('/projects/like/', data={"project_id": 2})
+            response = test_client.post('/projects/like/', data={"project_id": project.id + 1})
             assert response.status_code == 400
             assert json.loads(response.data) == ProjectExceptions.BAD_PROJECT_ID_DATA
 
@@ -101,4 +101,3 @@ class ProjectFavoriteTestCase(BaseTestCase):
             assert response.status_code == 200
             assert FavoriteProject.query.get((2, 1)) is None
             assert json.loads(response.data) == {"status": "success", "count": 1, "active": False}
-    

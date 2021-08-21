@@ -5,58 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, jwt
 
 
-class User(db.Model):
-    __tablename__ = "users"
-    # __table_args__ = (
-    #     db.CheckConstraint(re.match('[^@]+@[^\.]+[^$]+', email, re.IGNORECASE)),
-    # )
 
-    id = db.Column(db.Integer, primary_key=True)
-    nickname = db.Column(db.String(128), nullable=False, unique=True)
-    first_name = db.Column(db.String(128), nullable=True)
-    last_name = db.Column(db.String(128), nullable=True)
-    email = db.Column(db.String(128), nullable=False, unique=True)
-    password = db.Column(db.String(128), nullable=False)
-    avatar = db.Column(db.String(128), nullable=True)
-    telegram_nickname = db.Column(db.String(32), nullable=False, unique=True)
-
-    def __init__(self, nickname, email, password, telegram_nickname, avatar=None, first_name=None, last_name=None):
-        self.nickname = nickname
-        self.first_name = first_name
-        self.last_name = last_name
-        self.email = email
-        self.password = generate_password_hash(password)
-        self.avatar = avatar
-        self.telegram_nickname = telegram_nickname
-
-    @staticmethod
-    def create_password_hash(password):
-        return generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password, password)
-
-    @staticmethod
-    def contains_with_email(email):
-        user = User.query.with_entities(User.email).filter_by(email=email).first()
-        return False if user is None else True
-
-    @staticmethod
-    @jwt.user_claims_loader
-    def add_claims(user):
-        return {
-            'email': user.email,
-            'nickname': user.nickname,
-            'avatar': user.avatar,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'telegram_nickname': user.telegram_nickname
-        }
-
-    @staticmethod
-    @jwt.user_identity_loader
-    def add_identity(user):
-        return user.id
 
 class ProjectCreator(db.Model):
     __tablename__ = 'project_creator'

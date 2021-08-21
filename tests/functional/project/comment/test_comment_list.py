@@ -5,7 +5,6 @@ from tests.functional.base import BaseTestCase
 from tests.functional.project.comment.utils import comments_sorted_by_score
 from tests.functional.project.utils import create_project, create_project_comment, upvote_comment
 
-
 class ProjectCommentList(BaseTestCase):
 
     def test_empty_comment_list(self) -> None:
@@ -49,3 +48,4 @@ class ProjectCommentList(BaseTestCase):
 
             assert response.status_code == 200
             assert comments_sorted_by_score(comment_list)
+            

@@ -1,5 +1,7 @@
 from flask import Blueprint
+from .routes import Account
+
 
 bp = Blueprint('account', __name__)
 
-from app.account import routes
+Account.register(bp)
