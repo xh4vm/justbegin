@@ -8,11 +8,11 @@ class PutProjectSchema(Schema):
 
 
 class PostLikeSchema(Schema):
-    project_id = fields.String(required=True)
+    project_id = fields.Integer(required=True)
 
 
 class DeleteProjectSchema(Schema):
-    project_id = fields.String(required=True)
+    project_id = fields.Integer(required=True)
 
 
 post_like_schema = PostLikeSchema()
