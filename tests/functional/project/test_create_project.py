@@ -26,4 +26,4 @@ class ProjectCreateTestCase(BaseWithoutCreateProjectAuthorTestCase):
 
             response = test_client.put('/projects/', data=project_data)
 
-            assert response.status_code == 200
+            assert response.status_code == 201

@@ -36,7 +36,7 @@ class Projects(FlaskView):
         self.session.add(project)
         self.session.commit()
 
-        return jsonify({'id': project.id}), 200
+        return jsonify({'id': project.id}), 201
 
     @user_required
     @route('/like/', methods=['POST'])
