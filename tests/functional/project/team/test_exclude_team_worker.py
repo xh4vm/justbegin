@@ -56,7 +56,7 @@ class ProjectExcludeTeamWorkerTestCase(BaseTestCase):
             assert response.status_code == 200
             assert len(TeamWorker.query.filter_by(user_id=user.id, project_id=project.id).all()) == 0
 
-    def test_add_team_worker_users_not_exists(self):
+    def test_exclude_team_worker_users_not_exists(self):
         
         with self.app.test_client() as test_client:
 
@@ -69,7 +69,7 @@ class ProjectExcludeTeamWorkerTestCase(BaseTestCase):
 
             assert response.status_code == 400
     
-    def test_add_team_worker_wrong_author_project(self):
+    def test_exclude_team_worker_wrong_author_project(self):
         
         with self.app.test_client() as test_client:
 
@@ -86,7 +86,7 @@ class ProjectExcludeTeamWorkerTestCase(BaseTestCase):
             assert response.status_code == 400
             assert json.loads(response.data) == ProjectExceptions.IS_NOT_PROJECT_ADMIN
 
-    def test_add_team_worker_project_required(self):
+    def test_exclude_team_worker_project_required(self):
         
         with self.app.test_client() as test_client:
 
