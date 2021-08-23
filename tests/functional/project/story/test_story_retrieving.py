@@ -1,10 +1,10 @@
 import json
 
-from tests.functional.base import BaseTestCase
+from tests.functional.bases.base_without_create_project_author import BaseWithoutCreateProjectAuthorTestCase
 from tests.functional.project.utils import create_project_story
 
 
-class ProjectStoryRetrieving(BaseTestCase):
+class ProjectStoryRetrieving(BaseWithoutCreateProjectAuthorTestCase):
 
     def test_user_can_retrieve_project_story(self) -> None:
         with self.app.test_client() as client:

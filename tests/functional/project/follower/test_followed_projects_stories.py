@@ -2,11 +2,11 @@ import json
 from random import choice
 
 from tests.functional.auth.utils import sign_in
-from tests.functional.base import BaseTestCase
+from tests.functional.bases.base_without_create_project_author import BaseWithoutCreateProjectAuthorTestCase
 from tests.functional.project.utils import create_project, create_project_follower, create_project_story
 
 
-class FollowedProjectsTimeline(BaseTestCase):
+class FollowedProjectsTimeline(BaseWithoutCreateProjectAuthorTestCase):
 
     def test_user_can_retrieve_stories_from_followed_projects(self) -> None:
         with self.app.test_client() as client:

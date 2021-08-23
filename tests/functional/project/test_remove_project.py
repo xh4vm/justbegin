@@ -2,11 +2,10 @@ import json
 from tests.functional.auth.utils import sign_in
 
 from app import db
-from app.models import ProjectCreator
 from app.project.models import Project
 from app.project.exceptions import ProjectExceptions
-from tests.functional.base import BaseTestCase
-from tests.functional.project.utils import create_project
+from tests.functional.bases.base import BaseTestCase
+from tests.functional.project.utils import create_project, request_create_project
 
 
 class ProjectRemoveTestCase(BaseTestCase):
@@ -21,11 +20,12 @@ class ProjectRemoveTestCase(BaseTestCase):
         
         with self.app.test_client() as test_client:
             sign_in(test_client)
-            project = create_project()
+            project, response = request_create_project(test_client)
+            # project = create_project()
 
             #TODO
-            db.session.add(ProjectCreator(user_id=1, project_id=project.id))
-            db.session.commit()
+            # db.session.add(ProjectCreator(user_id=1, project_id=project.id))
+            # db.session.commit()
         
             response = test_client.delete('/projects/remove/', data={"project_id": project.id})
             assert response.status_code == 200
@@ -34,10 +34,11 @@ class ProjectRemoveTestCase(BaseTestCase):
         
         with self.app.test_client() as test_client:
             sign_in(test_client)
-            project = create_project()
+            project, response = request_create_project(test_client)
+            # project = create_project()
 
-            db.session.add(ProjectCreator(user_id=1, project_id=project.id))
-            db.session.commit()
+            # db.session.add(ProjectCreator(user_id=1, project_id=project.id))
+            # db.session.commit()
         
             assert Project.query.get(project.id) is not None
 
@@ -51,10 +52,12 @@ class ProjectRemoveTestCase(BaseTestCase):
         
         with self.app.test_client() as test_client:
             sign_in(test_client)
-            project = create_project()
+            project, response = request_create_project(test_client)
 
-            db.session.add(ProjectCreator(user_id=1, project_id=1))
-            db.session.commit()
+            # project = create_project()
+
+            # db.session.add(ProjectCreator(user_id=1, project_id=1))
+            # db.session.commit()
         
             response = test_client.delete('/projects/remove/', data={"project_id": project.id + 1})
             assert response.status_code == 400
@@ -64,10 +67,12 @@ class ProjectRemoveTestCase(BaseTestCase):
         
         with self.app.test_client() as test_client:
             sign_in(test_client)
-            project = create_project()
+            project, response = request_create_project(test_client)
+
+            # project = create_project()
             
-            db.session.add(ProjectCreator(user_id=1, project_id=1))
-            db.session.commit()
+            # db.session.add(ProjectCreator(user_id=1, project_id=1))
+            # db.session.commit()
             
             test_client.get('/auth/logout/')
             sign_in(test_client)

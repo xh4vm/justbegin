@@ -9,7 +9,7 @@ from app.auth.decorators import user_required, check_auth
 from app.auth.utils import get_auth_instance
 from app.decorators import request_is_json, request_validation_required
 from app.project.models import FavoriteProject
-from app.project.decorators import verify_authorship
+from app.project.decorators import verify_project_authorship
 from .exceptions import ProjectExceptions
 from .models import Project
 from .serializers import serialize_project
@@ -62,7 +62,7 @@ class Projects(FlaskView):
         return jsonify({"status": "success", "projects": projects}), 200
 
     @check_auth
-    @verify_authorship(request_key='project_id')
+    @verify_project_authorship()
     @request_validation_required(delete_project_schema)
     @route('/remove/', methods=['DELETE'])
     def remove(self, validated_request: dict):

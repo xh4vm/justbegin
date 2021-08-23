@@ -1,10 +1,10 @@
 from random import randint
 
-from tests.functional.base import BaseTestCase
+from tests.functional.bases.base_without_create_project_author import BaseWithoutCreateProjectAuthorTestCase
 from tests.functional.project.utils import create_project, create_project_story
 
 
-class ProjectStoryList(BaseTestCase):
+class ProjectStoryList(BaseWithoutCreateProjectAuthorTestCase):
 
     def test_empty_story_list(self) -> None:
         with self.app.test_client() as client:

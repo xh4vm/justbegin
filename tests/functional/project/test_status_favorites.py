@@ -1,10 +1,10 @@
 import json
 from tests.functional.auth.utils import sign_in
 from tests.functional.project.utils import create_project
-from tests.functional.base import BaseTestCase
+from tests.functional.bases.base_without_create_project_author import BaseWithoutCreateProjectAuthorTestCase
 
 
-class StatusFavoriteProjectsTestCase(BaseTestCase):
+class StatusFavoriteProjectsTestCase(BaseWithoutCreateProjectAuthorTestCase):
 
     def test_status_favorite_project_empty(self):
 

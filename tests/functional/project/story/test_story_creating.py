@@ -3,11 +3,11 @@ from random import randint
 
 from app.project.story.models import ProjectStory
 from tests.functional.auth.utils import sign_in
-from tests.functional.base import BaseTestCase
+from tests.functional.bases.base_without_create_project_author import BaseWithoutCreateProjectAuthorTestCase
 from tests.functional.project.utils import create_project, random_string
 
 
-class ProjectStoryCreating(BaseTestCase):
+class ProjectStoryCreating(BaseWithoutCreateProjectAuthorTestCase):
 
     def test_user_story_persisted(self) -> None:
         with self.app.test_client() as client:

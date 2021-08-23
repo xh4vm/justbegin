@@ -1,11 +1,11 @@
 from random import randint
 
 from tests.functional.auth.utils import sign_in
-from tests.functional.base import BaseTestCase
+from tests.functional.bases.base_without_create_project_author import BaseWithoutCreateProjectAuthorTestCase
 from tests.functional.project.utils import create_project_comment, upvote_comment
 
 
-class ProjectCommentUpvoting(BaseTestCase):
+class ProjectCommentUpvoting(BaseWithoutCreateProjectAuthorTestCase):
 
     def test_user_can_upvote_comment(self) -> None:
         with self.app.test_client() as client:

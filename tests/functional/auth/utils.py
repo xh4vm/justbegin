@@ -1,3 +1,4 @@
+from app.auth.utils import get_auth_instance
 import json
 from tests.functional.header import Header
 from app.db import db
@@ -52,3 +53,6 @@ def sign_up_get_response(client, first_name: str = None, last_name: str = None, 
     user : User = User.query.filter_by(nickname=sign_up_data['nickname'], email=sign_up_data['email']).first()
 
     return user, response
+
+def request_logout(client):
+    return client.get('/auth/logout/')

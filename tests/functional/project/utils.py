@@ -1,5 +1,7 @@
 from random import randint
 
+from werkzeug.exceptions import abort
+
 from app.db import db
 from app.project.comment.models import ProjectComment
 from app.project.follower.models import ProjectFollower
@@ -8,6 +10,20 @@ from app.project.story.models import ProjectStory
 from tests.functional.auth.utils import create_user
 from tests.utils import random_string
 
+
+def request_create_project(client, title: str = None, description: str = None, website: str = None) -> Project:
+    project_data = {
+        'title': random_string(),
+        'description': random_string(),
+        'website': f"{random_string()}.com",
+    }
+
+    response = client.put('/projects/', data=project_data)
+
+    if response.status_code >= 400:
+        abort(response.status_code)
+
+    return Project.query.filter_by(title=project_data['title'], description=project_data['description'], website=project_data['website']).first(), response
 
 def create_project(title: str = None, description: str = None, website: str = None) -> Project:
     project = Project(

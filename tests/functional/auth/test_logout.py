@@ -2,7 +2,7 @@ from tests.functional.auth.utils import sign_in, create_user
 from werkzeug.wrappers.base_request import _assert_not_shallow
 from tests.functional.TestAuth import TestAuth
 from flask import request
-from tests.functional.base import BaseTestCase
+from tests.functional.bases.base import BaseTestCase
 from tests.functional.header import Header
 
 
@@ -17,8 +17,7 @@ class LogoutTestCase(BaseTestCase, TestAuth):
     def test_login_success_jwt(self):
 
         with self.app.test_client() as test_client:
-            user = sign_in(test_client)
-            print(user)
+            sign_in(test_client)
 
             response = test_client.get('/auth/logout/')
 

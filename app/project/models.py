@@ -1,3 +1,11 @@
+from flask.globals import current_app
+from flask_jwt_extended.utils import get_raw_jwt
+from sqlalchemy.orm.session import Session
+from werkzeug.exceptions import abort
+from app.auth.decorators import user_required
+from app.auth.utils import get_auth_instance
+from sqlalchemy.event.api import listens_for
+from .team.models import TeamWorker, WorkerRole
 from sqlalchemy.sql.functions import func
 from typing import List
 
@@ -11,6 +19,7 @@ from .story.exceptions import InvalidProjectStoryAuthorRole
 from .story.models import ProjectStory
 from ..db import Model, BaseModel
 from app.auth.models import User
+from app import db
 
 
 class Project(Model):
@@ -93,10 +102,42 @@ class Project(Model):
         if follower is not None:
             self.session.delete(follower)
             self.session.commit()
-            
+
+    def add_worker(self, user_id : int, worker_role_ids : list) -> None:
+        for worker_role_id in worker_role_ids:
+            team_worker : TeamWorker = TeamWorker(user_id=user_id, project_id=self.id, worker_role_id=worker_role_id)
+            self.session.add(team_worker)
+        
+        self.session.commit()
+
+    def exclude_worker(self, user_id : int) -> None:
+        team_worker_all_roles : TeamWorker = TeamWorker.query.filter_by(user_id=user_id, project_id=self.id).all()
+
+        self.session.delete(team_worker_all_roles)
+        self.session.commit()
+
+    def delete_worker_role(self, user_id : int, worker_role_id : int) -> None:
+        user_worker_role : TeamWorker = TeamWorker.query \
+            .filter_by(user_id=user_id, project_id=self.id, worker_role_id=worker_role_id) \
+            .all()
+
+        self.session.delete(user_worker_role)
+        self.session.commit()
+
 
 class FavoriteProject(BaseModel):
 
     user_id : int = Column(Integer, ForeignKey('users.id'), primary_key=True)
     project_id : int = Column(Integer, ForeignKey('projects.id'), primary_key=True)
+
+@listens_for(Project, 'after_insert', named=True)
+def create_author_project(mapper, connection, target):
+    
+    auth_data = get_auth_instance().get_current_user_data_from_token()
+
+    if auth_data is None:
+        abort(401)
+        
+    connection.execute(TeamWorker.__table__.insert() \
+        .values(user_id=auth_data[0], project_id=target.id, worker_role_id=WorkerRole.get_admin().id))
 

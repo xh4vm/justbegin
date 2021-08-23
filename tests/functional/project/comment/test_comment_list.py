@@ -1,12 +1,12 @@
 import json
 from random import randint
 
-from tests.functional.base import BaseTestCase
+from tests.functional.bases.base_without_create_project_author import BaseWithoutCreateProjectAuthorTestCase
 from tests.functional.project.comment.utils import comments_sorted_by_score
 from tests.functional.project.utils import create_project, create_project_comment, upvote_comment
 
 
-class ProjectCommentList(BaseTestCase):
+class ProjectCommentList(BaseWithoutCreateProjectAuthorTestCase):
 
     def test_empty_comment_list(self) -> None:
         with self.app.test_client() as client:

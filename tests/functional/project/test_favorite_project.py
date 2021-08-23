@@ -1,14 +1,19 @@
+from flask_jwt_extended.utils import get_raw_jwt
+from tests.functional.TestAuth import TestAuth
+from flask.globals import current_app
+from app.auth.utils import get_auth_instance
+from app.project.team.models import TeamWorker, WorkerRole
 import json
-from tests.functional.auth.utils import sign_in
+from tests.functional.auth.utils import sign_in, sign_in_get_response
 
 from app.project.models import FavoriteProject
 from app.project.exceptions import ProjectExceptions
-from tests.functional.base import BaseTestCase
+from tests.functional.bases.base_without_create_project_author import BaseWithoutCreateProjectAuthorTestCase
 from tests.functional.header import Header
-from tests.functional.project.utils import create_project
+from tests.functional.project.utils import create_project, request_create_project
 
 
-class ProjectFavoriteTestCase(BaseTestCase):
+class ProjectFavoriteTestCase(BaseWithoutCreateProjectAuthorTestCase):
 
     def test_favorite_project_check_auth_fail(self):
 
@@ -25,7 +30,7 @@ class ProjectFavoriteTestCase(BaseTestCase):
         with self.app.test_client() as test_client:
             sign_in(test_client)
             project = create_project()
-        
+
             response = test_client.post('/projects/like/', data={"project_id": project.id})
             assert response.status_code == 200
 
@@ -33,8 +38,9 @@ class ProjectFavoriteTestCase(BaseTestCase):
         
         with self.app.test_client() as test_client:
             sign_in(test_client)
-            project = create_project()
-        
+            
+            project, response = request_create_project(test_client)
+
             response = test_client.post('/projects/like/', data={"project_id": project.id + 1})
             assert response.status_code == 400
             assert json.loads(response.data) == ProjectExceptions.BAD_PROJECT_ID_DATA

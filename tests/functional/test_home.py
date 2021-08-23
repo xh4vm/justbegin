@@ -1,5 +1,5 @@
 import json
-from tests.functional.base import BaseTestCase
+from tests.functional.bases.base import BaseTestCase
 from app.home.exceptions import HomeExceptions
 
 

@@ -3,11 +3,11 @@ from random import randint
 
 from app.project.comment.models import ProjectComment
 from tests.functional.auth.utils import sign_in
-from tests.functional.base import BaseTestCase
+from tests.functional.bases.base_without_create_project_author import BaseWithoutCreateProjectAuthorTestCase
 from tests.functional.project.utils import create_project, random_string, create_project_comment
 
 
-class ProjectCommentCreating(BaseTestCase):
+class ProjectCommentCreating(BaseWithoutCreateProjectAuthorTestCase):
 
     def test_user_comment_persisted(self) -> None:
         with self.app.test_client() as client:

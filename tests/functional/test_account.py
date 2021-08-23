@@ -4,7 +4,7 @@ import json
 from app import db
 from tests.functional.auth.utils import sign_in
 from tests.functional.TestAuth import TestAuth
-from tests.functional.base import BaseTestCase
+from tests.functional.bases.base_without_create_project_author import BaseTestCase
 from app.auth.exceptions import AuthExceptions
 from tests.functional.header import Header
 

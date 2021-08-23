@@ -2,7 +2,7 @@ import json
 from app.auth.models import User
 from tests.functional.auth.utils import create_user, sign_in, sign_in_get_response
 from tests.functional.TestAuth import TestAuth
-from tests.functional.base import BaseTestCase
+from tests.functional.bases.base import BaseTestCase
 from app.auth.exceptions import AuthExceptions
 from tests.functional.header import Header
 
