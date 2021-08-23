@@ -1,4 +1,4 @@
-from sqlalchemy.sql.sqltypes import JSON
+from app.utils.request_type.JSON import JSON
 from flask_classy import FlaskView, route
 from sqlalchemy.orm.scoping import scoped_session
 from ..decorators import project_required, verify_project_authorship
