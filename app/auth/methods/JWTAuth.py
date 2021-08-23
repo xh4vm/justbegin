@@ -16,8 +16,8 @@ class JWTAuth(IAuth):
     @jwt_optional
     def get_current_user_data_from_token(self) -> tuple:
         id = get_jwt_identity()
-        if id is None:
-            return None
+        # if id is None:
+        #     return None
 
         return id, get_jwt_claims()
 

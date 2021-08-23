@@ -21,11 +21,6 @@ class ProjectRemoveTestCase(BaseTestCase):
         with self.app.test_client() as test_client:
             sign_in(test_client)
             project, response = request_create_project(test_client)
-            # project = create_project()
-
-            #TODO
-            # db.session.add(ProjectCreator(user_id=1, project_id=project.id))
-            # db.session.commit()
         
             response = test_client.delete('/projects/remove/', data={"project_id": project.id})
             assert response.status_code == 200
@@ -35,10 +30,6 @@ class ProjectRemoveTestCase(BaseTestCase):
         with self.app.test_client() as test_client:
             sign_in(test_client)
             project, response = request_create_project(test_client)
-            # project = create_project()
-
-            # db.session.add(ProjectCreator(user_id=1, project_id=project.id))
-            # db.session.commit()
         
             assert Project.query.get(project.id) is not None
 
@@ -54,11 +45,6 @@ class ProjectRemoveTestCase(BaseTestCase):
             sign_in(test_client)
             project, response = request_create_project(test_client)
 
-            # project = create_project()
-
-            # db.session.add(ProjectCreator(user_id=1, project_id=1))
-            # db.session.commit()
-        
             response = test_client.delete('/projects/remove/', data={"project_id": project.id + 1})
             assert response.status_code == 400
             assert json.loads(response.data) == ProjectExceptions.BAD_PROJECT_ID_DATA
@@ -69,11 +55,6 @@ class ProjectRemoveTestCase(BaseTestCase):
             sign_in(test_client)
             project, response = request_create_project(test_client)
 
-            # project = create_project()
-            
-            # db.session.add(ProjectCreator(user_id=1, project_id=1))
-            # db.session.commit()
-            
             test_client.get('/auth/logout/')
             sign_in(test_client)
 

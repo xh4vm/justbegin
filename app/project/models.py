@@ -110,6 +110,7 @@ class Project(Model):
         
         self.session.commit()
 
+
     def exclude_worker(self, user_id : int) -> None:
         team_worker_all_roles : TeamWorker = TeamWorker.query.filter_by(user_id=user_id, project_id=self.id).all()
 

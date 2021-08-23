@@ -50,13 +50,13 @@ def user_required(f):
     return decorated_function
 
 
-def user_exists(req_type: IRequestType = Form):
+def user_exists_by_email(req_type: IRequestType = Form):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            user_id = req_type().get().get('user_id')
+            email = req_type().get().get('email')
 
-            if User.query.get(user_id) is None:
+            if User.query.filter_by(email=email).first() is None:
                 abort(400)
             
             return f(*args, **kwargs)

@@ -16,7 +16,8 @@ class BaseTestCase(TestCase):
         
     def setUp(self):  
         db.create_all()
-        db.session.add(WorkerRole("Administrator"))
+        db.session.add_all([
+            WorkerRole("Administrator"), WorkerRole("Developer"), WorkerRole("Manager")])
         db.session.commit()
 
     def tearDown(self): 
