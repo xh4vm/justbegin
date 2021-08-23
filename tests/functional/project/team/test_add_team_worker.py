@@ -12,7 +12,7 @@ from app.project.team.models import WorkerRole
 from app import db 
 
 
-class ProjectCreateTestCase(BaseTestCase):
+class ProjectAddTeamWorkerTestCase(BaseTestCase):
 
     def test_add_team_worker_check_auth_fail(self):
 
