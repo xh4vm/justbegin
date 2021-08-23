@@ -110,17 +110,14 @@ class Project(Model):
         
         self.session.commit()
 
-
     def exclude_worker(self, user_id : int) -> None:
-        team_worker_all_roles : TeamWorker = TeamWorker.query.filter_by(user_id=user_id, project_id=self.id).delete()
+        TeamWorker.query.filter_by(user_id=user_id, project_id=self.id).delete()
         self.session.commit()
 
     def delete_worker_role(self, user_id : int, worker_role_id : int) -> None:
-        user_worker_role : TeamWorker = TeamWorker.query \
+        TeamWorker.query \
             .filter_by(user_id=user_id, project_id=self.id, worker_role_id=worker_role_id) \
-            .all()
-
-        self.session.delete(user_worker_role)
+            .delete()
         self.session.commit()
 
 

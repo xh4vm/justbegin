@@ -61,7 +61,7 @@ class ProjectDeleteWorkerRoleTestCase(BaseTestCase):
         
         with self.app.test_client() as test_client:
 
-            user = sign_in(test_client)
+            sign_in(test_client)
             project, response = request_create_project(test_client)
 
             team_worker_data = {"user_id": "asd", "project_id": project.id, "worker_role_id": WorkerRole.get_admin().id}
@@ -80,7 +80,7 @@ class ProjectDeleteWorkerRoleTestCase(BaseTestCase):
 
             user = sign_in(test_client)
 
-            team_worker_data = {"user_id": "asd", "project_id": project.id, "worker_role_id": WorkerRole.get_admin().id}
+            team_worker_data = {"user_id": user.id, "project_id": project.id, "worker_role_id": WorkerRole.get_admin().id}
 
             response = test_client.delete(f'/projects/{project.id}/delete_worker_role/', data=team_worker_data)
 
@@ -93,9 +93,8 @@ class ProjectDeleteWorkerRoleTestCase(BaseTestCase):
 
             user = sign_in(test_client)
 
-            team_worker_data = {"user_id": "asd", "project_id": "1", "worker_role_id": WorkerRole.get_admin().id}
+            team_worker_data = {"user_id": user.id, "project_id": "1", "worker_role_id": WorkerRole.get_admin().id}
 
             response = test_client.delete(f'/projects/1/delete_worker_role/', data=team_worker_data)
 
-            assert response.data == 404
-            # assert response.status_code == 404
+            assert response.status_code == 404
