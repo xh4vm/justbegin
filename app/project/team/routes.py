@@ -3,7 +3,7 @@ from flask_classy import FlaskView, route
 from sqlalchemy.orm.scoping import scoped_session
 from ..decorators import project_required, verify_project_authorship
 from ..models import Project
-from ...auth.decorators import check_auth, user_exists_by_email
+from ...auth.decorators import check_auth, user_exists_by_email, user_exists
 from ...db import db
 from ...decorators import request_validation_required
 from app.auth.models import User
@@ -28,13 +28,13 @@ class Teams(FlaskView):
 
 
     @check_auth
-    @user_exists_by_email()
+    @user_exists()
     @project_required
-    @request_validation_required(delete_team_worker_schema)
+    @request_validation_required(schema=delete_team_worker_schema)
     @verify_project_authorship()
     @route('/<int:project_id>/exclude_team_worker/', methods=['DELETE'])
     def exclude_team_worker(self, project : Project, validated_request : dict):
-        user = User.query.filter_by(email=validated_request.get('email')).first()
+        user = User.query.get(validated_request.get('user_id'))
         project.exclude_worker(user.id)
 
         return "", 200
@@ -43,9 +43,9 @@ class Teams(FlaskView):
     @check_auth
     @user_exists_by_email()
     @project_required
-    @request_validation_required(delete_worker_role_schema)
+    @request_validation_required(schema=delete_worker_role_schema)
     @verify_project_authorship()
     @route('/delete_worker_role/', methods=['DELETE'])
     def delete_worker_role(self, project : Project, validated_request : dict):
-        user = User.query.filter_by(email=validated_request.get('email')).first()
+        user = User.query.filter_by(email=validated_request.get('user_id')).first()
         project.delete_worker_role(user.id, validated_request.get('worker_role_id'))

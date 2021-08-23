@@ -63,3 +63,17 @@ def user_exists_by_email(req_type: IRequestType = Form):
 
         return decorated_function
     return decorator
+
+def user_exists(req_type: IRequestType = Form):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            user_id = req_type().get().get('user_id')
+
+            if User.query.get(user_id) is None:
+                abort(400)
+            
+            return f(*args, **kwargs)
+
+        return decorated_function
+    return decorator
