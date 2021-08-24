@@ -9,9 +9,9 @@ from ..decorators import project_required, project_comment_required, project_com
 from ..models import Project
 from ..serializers import serialize_project_comments
 from ... import db
-from ...auth.decorators import user_required
+from ...user.decorators import user_required
 from ...decorators import request_validation_required
-from app.auth.models import User
+from app.user.models import User
 
 
 class ProjectComments(FlaskView):

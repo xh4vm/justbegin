@@ -1,11 +1,11 @@
 from sqlalchemy.orm.scoping import scoped_session
-from app.auth.models import User
+from app.user.models import User
 import json
 from app import db
-from tests.functional.auth.utils import sign_in
+from tests.functional.user.auth.utils import sign_in
 from tests.functional.TestAuth import TestAuth
 from tests.functional.bases.base_without_create_project_author import BaseTestCase
-from app.auth.exceptions import AuthExceptions
+from app.user.auth.exceptions import AuthExceptions
 from tests.functional.header import Header
 
 
@@ -14,14 +14,14 @@ class AccountTestCase(BaseTestCase, TestAuth):
 
     def test_failed_get_account_page(self):
         with self.app.test_client() as test_client:
-            response = test_client.get('/account/')
+            response = test_client.get('/users/account/')
             assert response.status_code == 401
 
     def test_success_get_account_page(self):
         with self.app.test_client() as test_client:
             user = sign_in(test_client)
 
-            response = test_client.get('/account/')
+            response = test_client.get('/users/account/')
 
             assert response.status_code == 200
             assert json.loads(response.data) == {"avatar": None, "email": user.email,
@@ -31,14 +31,14 @@ class AccountTestCase(BaseTestCase, TestAuth):
     def test_failed_get_settings_page(self):
         with self.app.test_client() as test_client:
 
-            response = test_client.get('/account/settings/')
+            response = test_client.get('/users/account/settings/')
             assert response.status_code == 401
     
     def test_settings_post_form(self):
         with self.app.test_client() as test_client:
             sign_in(test_client)
             
-            response = test_client.post('/account/settings/', data=json.dumps({
+            response = test_client.post('/users/account/settings/', data=json.dumps({
                 'nickname': 'new_nickname',
                 'first_name': 'new_first_name',
                 'last_name': 'new_last_name',
@@ -59,7 +59,7 @@ class AccountTestCase(BaseTestCase, TestAuth):
         with self.app.test_client() as test_client:
             user = sign_in(test_client)
 
-            response = test_client.get('/account/settings/')
+            response = test_client.get('/users/account/settings/')
 
             assert response.status_code == 200
 
@@ -71,7 +71,7 @@ class AccountTestCase(BaseTestCase, TestAuth):
         with self.app.test_client() as test_client:
             user = sign_in(test_client)
 
-            response = test_client.post('/account/delete/', data=json.dumps({
+            response = test_client.post('/users/account/delete/', data=json.dumps({
                 'user_message': 'my dream is dead...',
             }), headers=Header.json)
 
@@ -82,7 +82,7 @@ class AccountTestCase(BaseTestCase, TestAuth):
         with self.app.test_client() as test_client:
             user = sign_in(test_client)
 
-            response = test_client.get('/account/delete/')
+            response = test_client.get('/users/account/delete/')
 
             assert response.status_code == 200
             assert json.loads(response.data) == {"nickname": user.nickname}

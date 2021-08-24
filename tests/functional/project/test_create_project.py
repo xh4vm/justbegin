@@ -1,7 +1,6 @@
-from app.auth.utils import get_auth_instance
 from tests.utils import random_string
 from tests.functional.header import Header
-from tests.functional.auth.utils import create_user, sign_in
+from tests.functional.user.auth.utils import create_user, sign_in
 from tests.functional.bases.base_without_create_project_author import BaseWithoutCreateProjectAuthorTestCase
 
 

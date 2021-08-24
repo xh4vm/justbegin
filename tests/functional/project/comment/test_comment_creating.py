@@ -2,7 +2,7 @@ import json
 from random import randint
 
 from app.project.comment.models import ProjectComment
-from tests.functional.auth.utils import sign_in
+from tests.functional.user.auth.utils import sign_in
 from tests.functional.bases.base_without_create_project_author import BaseWithoutCreateProjectAuthorTestCase
 from tests.functional.project.utils import create_project, random_string, create_project_comment
 

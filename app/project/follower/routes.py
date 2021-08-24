@@ -3,8 +3,8 @@ from flask_classy import FlaskView, route
 
 from ..decorators import project_required
 from ..models import Project
-from ...auth.decorators import user_required
-from ...auth.models import User
+from ...user.decorators import user_required
+from ...user.models import User
 
 
 class ProjectFollowers(FlaskView):

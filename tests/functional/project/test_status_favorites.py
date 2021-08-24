@@ -1,5 +1,7 @@
 import json
-from tests.functional.auth.utils import sign_in
+
+from flask.globals import request
+from tests.functional.user.auth.utils import request_logout, sign_in
 from tests.functional.project.utils import create_project
 from tests.functional.bases.base_without_create_project_author import BaseWithoutCreateProjectAuthorTestCase
 
@@ -70,7 +72,7 @@ class StatusFavoriteProjectsTestCase(BaseWithoutCreateProjectAuthorTestCase):
             project = create_project()
         
             test_client.post('/projects/like/', data={"project_id": project.id})
-            test_client.get('/auth/logout/')
+            request_logout(test_client)
 
             sign_in(test_client)
             test_client.post('/projects/like/', data={"project_id": project.id})

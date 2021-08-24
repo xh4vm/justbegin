@@ -1,12 +1,12 @@
-from ..utils.request_type.JSON import JSON
+from ...utils.request_type.JSON import JSON
 from flask.json import jsonify
 from app import db
 from flask import redirect, request
 from flask_classy import FlaskView, route
-from app.auth.decorators import check_auth
+from ...user.decorators import check_auth
 from app.decorators import request_validation_required
-from app.auth.utils import get_auth_instance
-from app.auth.models import User
+from ...user.auth.utils import get_auth_instance
+from app.user.models import User
 from app import mail
 from flask_mail import Message
 from .schemas import post_settings_schema, post_delete_account_schema

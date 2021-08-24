@@ -1,9 +1,5 @@
-from flask.globals import current_app
-from flask_jwt_extended.utils import get_raw_jwt
-from sqlalchemy.orm.session import Session
 from werkzeug.exceptions import abort
-from app.auth.decorators import user_required
-from app.auth.utils import get_auth_instance
+from ..user.auth.utils import get_auth_instance
 from sqlalchemy.event.api import listens_for
 from .team.models import TeamWorker, WorkerRole
 from sqlalchemy.sql.functions import func
@@ -18,8 +14,7 @@ from .follower.models import ProjectFollower
 from .story.exceptions import InvalidProjectStoryAuthorRole
 from .story.models import ProjectStory
 from ..db import Model, BaseModel
-from app.auth.models import User
-from app import db
+from app.user.models import User
 
 
 class Project(Model):

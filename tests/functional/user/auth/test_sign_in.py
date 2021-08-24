@@ -1,10 +1,9 @@
 import json
-from app.auth.models import User
-from tests.functional.auth.utils import create_user, sign_in, sign_in_get_response
+from app.user.models import User
+from tests.functional.user.auth.utils import create_user, sign_in, request_sign_in
 from tests.functional.TestAuth import TestAuth
 from tests.functional.bases.base import BaseTestCase
-from app.auth.exceptions import AuthExceptions
-from tests.functional.header import Header
+from app.user.auth.exceptions import AuthExceptions
 
 
 class SignInTestCase(BaseTestCase, TestAuth):
@@ -12,7 +11,7 @@ class SignInTestCase(BaseTestCase, TestAuth):
     def test_sign_in_success_jwt(self):
 
         with self.app.test_client() as test_client:
-            user, response = sign_in_get_response(test_client)
+            user, response = request_sign_in(test_client)
 
             assert response.status_code == 303
             assert self.get_set_cookie_name(response) == 'access_token_cookie'
@@ -26,7 +25,7 @@ class SignInTestCase(BaseTestCase, TestAuth):
 
         with self.app.test_client() as test_client:
             user : User = create_user()
-            response = test_client.post('/auth/sign_in/', data={'email':user.email, 'password': '123'})
+            response = test_client.post('/users/auth/sign_in/', data={'email':user.email, 'password': '123'})
 
             assert response.status_code == 400
             assert json.loads(response.data) == AuthExceptions.BAD_AUTH_DATA
@@ -36,7 +35,7 @@ class SignInTestCase(BaseTestCase, TestAuth):
         with self.app.test_client() as test_client:
             user = sign_in(test_client)
 
-            response = test_client.post('/auth/sign_in/', data={'email': user.email,'password': user.password})
+            response = test_client.post('/users/auth/sign_in/', data={'email': user.email,'password': user.password})
 
             assert response.status_code == 208
             assert json.loads(response.data) == AuthExceptions.ALREADY_AUTH

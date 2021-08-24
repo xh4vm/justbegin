@@ -7,7 +7,7 @@ from sqlalchemy.sql.sqltypes import String, SmallInteger
 
 from .exceptions import UnexpectedProjectRelation, InvalidProjectCommentVoteValue, OwnCommentVoting
 from ...db import Model, ModelId
-from app.auth.models import User
+from app.user.models import User
 
 
 class ProjectComment(Model):

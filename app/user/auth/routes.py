@@ -1,6 +1,6 @@
 from app.utils.request_type.JSON import JSON
 from sqlalchemy.orm.scoping import scoped_session
-from app.auth.methods import IAuth
+from .methods import IAuth
 from datetime import datetime
 from werkzeug.exceptions import NotFound
 from app import db
@@ -8,8 +8,8 @@ from app.decorators import request_is_json, request_validation_required
 from flask import json, render_template, jsonify, redirect, current_app
 from flask_classy import FlaskView, route
 from .exceptions import AuthExceptions
-from .decorators import already_auth, check_auth
-from .models import User
+from ..decorators import already_auth, check_auth
+from app.user.models import User
 from .utils import get_auth_instance
 from .schemas import post_user_schema, put_user_schema, post_reset_schema, put_reset_schema
 import jwt

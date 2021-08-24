@@ -1,11 +1,11 @@
 from app.utils.request_type.Form import Form
 from app.utils.request_type import IRequestType
-from app.auth.models import User
+from app.user.models import User
 from functools import wraps
 
 from flask import jsonify, abort
 
-from .utils import get_auth_instance
+from .auth.utils import get_auth_instance
 
 
 def already_auth(response: str, code: int):

@@ -1,10 +1,9 @@
 from flask_jwt_extended.utils import get_raw_jwt
 from tests.functional.TestAuth import TestAuth
 from flask.globals import current_app
-from app.auth.utils import get_auth_instance
 from app.project.team.models import TeamWorker, WorkerRole
 import json
-from tests.functional.auth.utils import sign_in, sign_in_get_response
+from tests.functional.user.auth.utils import request_logout, sign_in
 
 from app.project.models import FavoriteProject
 from app.project.exceptions import ProjectExceptions
@@ -93,7 +92,7 @@ class ProjectFavoriteTestCase(BaseWithoutCreateProjectAuthorTestCase):
             assert FavoriteProject.query.get((1, 1)) is not None
             assert json.loads(response.data) == {"status": "success", "count": 1, "active": True}
 
-            response = test_client.get('/auth/logout/')
+            response = request_logout(test_client)
 
             sign_in(test_client)
 

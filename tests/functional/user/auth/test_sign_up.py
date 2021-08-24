@@ -1,9 +1,9 @@
-from app.auth.models import User
+from app.user.models import User
 import json
-from tests.functional.auth.utils import create_user, sign_in, sign_up_get_response
+from tests.functional.user.auth.utils import create_user, sign_in, request_sign_up
 from tests.functional.TestAuth import TestAuth
 from tests.functional.bases.base import BaseTestCase
-from app.auth.exceptions import AuthExceptions
+from app.user.auth.exceptions import AuthExceptions
 
 
 class SignUpTestCase(BaseTestCase, TestAuth):
@@ -11,7 +11,7 @@ class SignUpTestCase(BaseTestCase, TestAuth):
     def test_sign_up_bad_confirm_password(self):
 
         with self.app.test_client() as test_client:
-            user, response = sign_up_get_response(test_client, confirm_password='123')
+            user, response = request_sign_up(test_client, confirm_password='123')
             
             assert response.status_code == 400
             assert json.loads(response.data) == AuthExceptions.BAD_CONFIRM_PASSWORD
@@ -19,7 +19,7 @@ class SignUpTestCase(BaseTestCase, TestAuth):
     def test_sign_up_success_jwt(self):
 
         with self.app.test_client() as test_client:
-            user, response = sign_up_get_response(test_client)
+            user, response = request_sign_up(test_client)
 
             assert response.status_code == 303
             assert self.get_set_cookie_name(response) == 'access_token_cookie'
@@ -34,7 +34,7 @@ class SignUpTestCase(BaseTestCase, TestAuth):
         with self.app.test_client() as test_client:
             sign_in(test_client)
 
-            user, response = sign_up_get_response(test_client)
+            user, response = request_sign_up(test_client)
 
             assert response.status_code == 208
             assert json.loads(response.data) == AuthExceptions.ALREADY_AUTH
@@ -43,7 +43,7 @@ class SignUpTestCase(BaseTestCase, TestAuth):
 
         with self.app.test_client() as test_client:
             _user : User= create_user()
-            user, response = sign_up_get_response(test_client, email=_user.email)
+            user, response = request_sign_up(test_client, email=_user.email)
 
             assert response.status_code == 400
             assert json.loads(response.data) == AuthExceptions.DUPLICATE_EMAIL
