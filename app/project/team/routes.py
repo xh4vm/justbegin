@@ -1,12 +1,13 @@
+from flask.json import jsonify
 from app.utils.request_type.JSON import JSON
 from flask_classy import FlaskView, route
 from sqlalchemy.orm.scoping import scoped_session
 from ..decorators import project_required, verify_project_authorship
 from ..models import Project
-from ...auth.decorators import check_auth, user_exists_by_email, user_exists
+from ...user.decorators import check_auth, user_exists_by_email, user_exists
 from ...db import db
 from ...decorators import request_validation_required
-from app.auth.models import User
+from app.user.models import User
 from .schemas import put_team_worker_schema, delete_worker_role_schema, delete_team_worker_schema
 
 
@@ -24,7 +25,7 @@ class Teams(FlaskView):
         user = User.query.filter_by(email=validated_request.get('email')).first()
         project.add_worker(user.id, validated_request.get('worker_role_ids'))
 
-        return "", 201
+        return jsonify(), 201
 
 
     @check_auth
@@ -38,7 +39,7 @@ class Teams(FlaskView):
         user = User.query.get(validated_request.get('user_id'))
         project.exclude_worker(user.id)
 
-        return "", 200
+        return jsonify(), 200
 
 
     @check_auth
@@ -52,4 +53,4 @@ class Teams(FlaskView):
         user = User.query.get(validated_request.get('user_id'))
         project.delete_worker_role(user.id, validated_request.get('worker_role_id'))
 
-        return "", 200
+        return jsonify(), 200

@@ -1,12 +1,12 @@
-from app.auth.models import User
+from app.user.models import User
 from flask import request, jsonify
 from flask_classy import FlaskView, route
 from sqlalchemy.orm.scoping import scoped_session
 from sqlalchemy.sql.functions import func
 
 from app import db
-from app.auth.decorators import user_required, check_auth
-from app.auth.utils import get_auth_instance
+from ..user.decorators import user_required, check_auth
+from ..user.auth.utils import get_auth_instance
 from app.decorators import request_is_json, request_validation_required
 from app.project.models import FavoriteProject
 from app.project.decorators import verify_project_authorship
@@ -74,4 +74,4 @@ class Projects(FlaskView):
         self.session.delete(project)
         self.session.commit()
 
-        return "", 200
+        return jsonify(), 200

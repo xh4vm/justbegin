@@ -1,4 +1,4 @@
-from app.auth.methods import IAuth
+from . import IAuth
 from app.utils.MetaSingleton import MetaSingleton
 
 

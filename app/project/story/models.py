@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.sqltypes import String
 
 from app.db import Model, ModelId
-from app.auth.models import User
+from app.user.models import User
 
 
 class ProjectStory(Model):

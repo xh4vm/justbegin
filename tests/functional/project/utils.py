@@ -7,7 +7,7 @@ from app.project.comment.models import ProjectComment
 from app.project.follower.models import ProjectFollower
 from app.project.models import Project
 from app.project.story.models import ProjectStory
-from tests.functional.auth.utils import create_user
+from tests.functional.user.auth.utils import create_user
 from tests.utils import random_string
 
 

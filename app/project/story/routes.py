@@ -8,10 +8,10 @@ from .schemas import post_project_story_schema, put_project_story_schema
 from ..decorators import project_required, project_story_required, project_story_authorship_required
 from ..models import Project
 from ..serializers import serialize_project_story
-from ...auth.decorators import user_required
+from ...user.decorators import user_required
 from ...db import db
 from ...decorators import request_validation_required
-from app.auth.models import User
+from app.user.models import User
 
 
 class ProjectStories(FlaskView):

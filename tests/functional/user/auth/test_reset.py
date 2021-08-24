@@ -1,11 +1,10 @@
 import json
-from tests.functional.auth.utils import create_user, sign_in
-from app.auth.methods.JWTAuth import JWTAuth
+from tests.functional.user.auth.utils import create_user, sign_in
+from app.user.auth.methods.JWTAuth import JWTAuth
 from tests.functional.TestAuth import TestAuth
 from tests.functional.bases.base import BaseTestCase
-from app.auth.exceptions import AuthExceptions
-from tests.functional.header import Header
-from app.auth.models import User
+from app.user.auth.exceptions import AuthExceptions
+from app.user.models import User
 from time import sleep
 
 
@@ -16,7 +15,7 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
         with self.app.test_client() as test_client:
             user = sign_in(test_client)
 
-            response = test_client.post('/auth/reset/', data={'email': user.email})
+            response = test_client.post('/users/auth/reset/', data={'email': user.email})
 
             assert response.status_code == 208
             assert json.loads(response.data) == AuthExceptions.ALREADY_AUTH
@@ -25,7 +24,7 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
 
         with self.app.test_client() as test_client:
 
-            response = test_client.post('/auth/reset/', data={'email': 'xoklhyip@yandex.ru'})
+            response = test_client.post('/users/auth/reset/', data={'email': 'xoklhyip@yandex.ru'})
 
             assert response.status_code == 400
             assert json.loads(response.data) == AuthExceptions.UNKNOWN_USER
@@ -35,7 +34,7 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
         with self.app.test_client() as test_client:
             user = create_user()
 
-            response = test_client.post('/auth/reset/', data={'email': user.email})
+            response = test_client.post('/users/auth/reset/', data={'email': user.email})
 
             assert response.status_code == 201
             assert response.data.decode() == ""
@@ -49,7 +48,7 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
             token = JWTAuth.get_token(user)
             new_password = 'new_password'
 
-            response = test_client.put(f'/auth/reset/{token}/', data={'password': new_password})
+            response = test_client.put(f'/users/auth/reset/{token}/', data={'password': new_password})
 
             assert response.status_code == 200
             assert response.data.decode() == ""
@@ -67,7 +66,7 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
             #Ждем протухания токена
             sleep(1)
 
-            response = test_client.put(f'/auth/reset/{token}/', data={'password': new_password})
+            response = test_client.put(f'/users/auth/reset/{token}/', data={'password': new_password})
 
             assert response.status_code == 408
             assert json.loads(response.data) == AuthExceptions.RESET_TOKENT_EXPIRED
@@ -81,7 +80,7 @@ class ResetPasswordTestCase(BaseTestCase, TestAuth):
             token : dict = JWTAuth.get_token(user=user)
             new_password : str = 'new_password'
 
-            response = test_client.put(f'/auth/reset/{token}/', data={'password': new_password})
+            response = test_client.put(f'/users/auth/reset/{token}/', data={'password': new_password})
 
             assert response.status_code == 208
             assert json.loads(response.data) == AuthExceptions.ALREADY_AUTH

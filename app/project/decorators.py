@@ -9,7 +9,7 @@ from .comment.models import ProjectComment
 from .models import Project
 from .exceptions import ProjectExceptions
 from .story.models import ProjectStory
-from ..auth.utils import get_auth_instance
+from ..user.auth.utils import get_auth_instance
 
 
 def verify_project_authorship(req_type: IRequestType = Form):

@@ -1,5 +1,5 @@
 import json
-from tests.functional.auth.utils import sign_in
+from tests.functional.user.auth.utils import request_logout, sign_in
 
 from app import db
 from app.project.models import Project
@@ -36,7 +36,7 @@ class ProjectRemoveTestCase(BaseTestCase):
             response = test_client.delete('/projects/remove/', data={"project_id": project.id})
 
             assert response.status_code == 200
-            assert response.data.decode() == ""
+            assert json.loads(response.data.decode()) == {}
             assert Project.query.get(project.id) is None
 
     def test_remove_project_bad_project_id_data(self):
@@ -55,7 +55,7 @@ class ProjectRemoveTestCase(BaseTestCase):
             sign_in(test_client)
             project, response = request_create_project(test_client)
 
-            test_client.get('/auth/logout/')
+            request_logout(test_client)
             sign_in(test_client)
 
             response = test_client.delete('/projects/remove/', data={"project_id": project.id})
