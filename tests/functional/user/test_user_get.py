@@ -56,3 +56,23 @@ class UserGetTestCase(BaseTestCase):
 
             assert "projects" in data.keys()
             assert data["projects"] == [serialize_project(project)]
+
+    def test_user_get_multiple_project_success(self):
+
+        with self.app.test_client() as test_client:
+            user = sign_in(test_client)
+            project_first, response = request_create_project(test_client)
+            project_second, response = request_create_project(test_client)
+            request_logout(test_client)
+            sign_in(test_client)
+
+            response = test_client.get(f'/users/{user.nickname}/')
+            
+            assert response.status_code == 200
+            
+            data = json.loads(response.data)
+            assert "user" in data.keys()
+            assert data["user"] == serialize_user(user)
+
+            assert "projects" in data.keys()
+            assert sorted(data["projects"], key=lambda x: x['id']) == sorted([serialize_project(project_first), serialize_project(project_second)], key=lambda x: x['id'])

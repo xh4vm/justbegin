@@ -13,12 +13,9 @@ class Users(FlaskView):
     session : scoped_session = db.session
 
     @check_auth
-    # @user_exists()
     @route('/<nickname>/', methods=['GET'])
     def get_user(self, nickname : str):
         user = User.query.filter_by(nickname=nickname).first()
 
-        return jsonify({
-            "user": serialize_user(user), 
+        return jsonify({"user": serialize_user(user), 
             "projects": list(map(serialize_project, user.projects_development))}), 200
-
