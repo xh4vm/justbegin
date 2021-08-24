@@ -4,6 +4,7 @@ from sqlalchemy.sql.schema import Column
 from ..db import Model
 from app import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
+from app.chat.models import Chat, ChatParty
 
 
 class User(Model):
@@ -30,10 +31,10 @@ class User(Model):
                                         order_by='Project.created_at.desc()',
                                         viewonly=True)
 
-    # project_roles = relationship('TeamWorker',
-    #                             primaryjoin="User.id == TeamWorker.user_id",
-    #                             order_by='TeamWorker.created_at.desc()',
-    #                             viewonly=True)
+    project_roles = relationship('TeamWorker',
+                                primaryjoin="User.id == TeamWorker.user_id",
+                                order_by='TeamWorker.created_at.desc()',
+                                viewonly=True)
 
     def __init__(self, nickname, email, password, telegram_nickname, avatar=None, first_name=None, last_name=None):
         self.nickname = nickname
