@@ -47,54 +47,54 @@ class ProjectFavoriteTestCase(BaseWithoutCreateProjectAuthorTestCase):
     def test_favorite_project_like_success(self):
         
         with self.app.test_client() as test_client:
-            sign_in(test_client)
+            user = sign_in(test_client)
             project = create_project()
 
-            assert FavoriteProject.query.get((1, 1)) is None
+            assert FavoriteProject.query.filter_by(user_id=user.id, project_id=project.id).first() is None
 
             response = test_client.post('/projects/like/', data={"project_id": project.id})
 
             assert response.status_code == 200
-            assert FavoriteProject.query.get((1, 1)) is not None
+            assert FavoriteProject.query.filter_by(user_id=user.id, project_id=project.id).first() is not None
             assert json.loads(response.data) == {"status": "success", "count": 1, "active": True}
 
     def test_favorite_project_unlike_success(self):
         
         with self.app.test_client() as test_client:
-            sign_in(test_client)
+            user = sign_in(test_client)
             project = create_project()
 
-            assert FavoriteProject.query.get((1, 1)) is None
+            assert FavoriteProject.query.filter_by(user_id=user.id, project_id=project.id).first() is None
 
             response = test_client.post('/projects/like/', data={"project_id": project.id})
             
             assert response.status_code == 200
-            assert FavoriteProject.query.get((1, 1)) is not None
+            assert FavoriteProject.query.filter_by(user_id=user.id, project_id=project.id).first() is not None
             assert json.loads(response.data) == {"status": "success", "count": 1, "active": True}
 
             response = test_client.post('/projects/like/', data={"project_id": project.id})
 
             assert response.status_code == 200
-            assert FavoriteProject.query.get((1, 1)) is None
+            assert FavoriteProject.query.filter_by(user_id=user.id, project_id=project.id).first() is None
             assert json.loads(response.data) == {"status": "success", "count": 0, "active": False}
 
     def test_favorite_project_multiple_user_like_like_unlike_success(self):
         
         with self.app.test_client() as test_client:
-            sign_in(test_client)
+            user = sign_in(test_client)
             project = create_project()
         
-            assert FavoriteProject.query.get((1, 1)) is None
+            assert FavoriteProject.query.filter_by(user_id=user.id, project_id=project.id).first() is None
 
             response = test_client.post('/projects/like/', data={"project_id": project.id})
             
             assert response.status_code == 200
-            assert FavoriteProject.query.get((1, 1)) is not None
+            assert FavoriteProject.query.filter_by(user_id=user.id, project_id=project.id).first() is not None
             assert json.loads(response.data) == {"status": "success", "count": 1, "active": True}
 
             response = request_logout(test_client)
 
-            sign_in(test_client)
+            other_user = sign_in(test_client)
 
             response = test_client.post('/projects/like/', data={"project_id": project.id})
 
@@ -104,5 +104,5 @@ class ProjectFavoriteTestCase(BaseWithoutCreateProjectAuthorTestCase):
             response = test_client.post('/projects/like/', data={"project_id": project.id})
 
             assert response.status_code == 200
-            assert FavoriteProject.query.get((2, 1)) is None
+            assert FavoriteProject.query.filter_by(user_id=other_user.id, project_id=project.id).first() is None
             assert json.loads(response.data) == {"status": "success", "count": 1, "active": False}

@@ -1,4 +1,4 @@
-from app.db import BaseModel, Model, ModelId
+from app.db import Model, ModelId
 from sqlalchemy.sql.functions import func
 
 from sqlalchemy.orm import relationship

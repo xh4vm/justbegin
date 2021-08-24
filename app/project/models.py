@@ -6,14 +6,14 @@ from sqlalchemy.sql.functions import func
 from typing import List
 
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql.schema import Column, ForeignKey
+from sqlalchemy.sql.schema import Column, ForeignKey, UniqueConstraint
 from sqlalchemy.sql.sqltypes import String, Integer
 
 from .comment.models import ProjectComment
 from .follower.models import ProjectFollower
 from .story.exceptions import InvalidProjectStoryAuthorRole
 from .story.models import ProjectStory
-from ..db import Model, BaseModel
+from ..db import Model
 from app.user.models import User
 
 
@@ -38,12 +38,12 @@ class Project(Model):
         return True
 
     def _unset_like(self, user_id : int) -> bool:
-        self.session.delete(FavoriteProject.query.get((user_id, self.id)))
+        self.session.delete(FavoriteProject.query.filter_by(user_id=user_id, project_id=self.id).first())
         self.session.commit()
         return False
 
     def like(self, user_id : int) -> bool:
-        check_liked_project = FavoriteProject.query.get((user_id, self.id))
+        check_liked_project = FavoriteProject.query.filter_by(user_id=user_id, project_id=self.id).first()
         return self._set_like(user_id) if check_liked_project is None else self._unset_like(user_id)
 
     def get_count_likes(self):
@@ -116,10 +116,14 @@ class Project(Model):
         self.session.commit()
 
 
-class FavoriteProject(BaseModel):
+class FavoriteProject(Model):
 
-    user_id : int = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    project_id : int = Column(Integer, ForeignKey('projects.id'), primary_key=True)
+    __table_args__ = (
+        UniqueConstraint('user_id', 'project_id', name='uq_favorite_project'),
+    )
+
+    user_id : int = Column(Integer, ForeignKey('users.id'), nullable=False)
+    project_id : int = Column(Integer, ForeignKey('projects.id'), nullable=False)
 
 @listens_for(Project, 'after_insert', named=True)
 def create_author_project(mapper, connection, target):
