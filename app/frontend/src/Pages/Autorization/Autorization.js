@@ -24,7 +24,7 @@ export const Autorization = () => {
                                 </div>
                             </form>
                         </div>
-                        <div className={styles.helperClass}><div className={styles.pickLink}><Link to="/"><img src="/images/bebeshka.png" alt="bebesha here" className={styles.logoForDisign}></img></Link></div></div>
+                        <div className={styles.helperClass}><div className={styles.pickLink}><Link to="/"><img src="/images/svgBebeshka.svg" alt="bebesha here" className={styles.logoForDisign}></img></Link></div></div>
                     </div>
                 </div>
             </div>
