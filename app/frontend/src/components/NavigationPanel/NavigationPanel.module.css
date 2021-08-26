@@ -1,0 +1,20 @@
+.myLink{
+    list-style: none;
+    color: whitesmoke;
+    text-decoration: none;
+}
+.myLinkWrapper{
+    width: 80%;
+    margin: 0 auto;
+}
+.navWrapp{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 105px;
+}
+.navBlock{
+    background-color: rgb(18, 17, 17, 75%);
+    height: 105px;
+    width: 100%;
+}

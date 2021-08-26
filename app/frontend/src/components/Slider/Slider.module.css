@@ -1,0 +1,30 @@
+.wrapper{
+    margin: 0 auto;
+    width: 80%;
+    display: flex;
+    justify-content: center;
+}
+.wrapperSlider{
+    display: flex;
+    width: 630px;
+    height: 130px;
+    overflow: hidden;
+    padding-top: 45px;
+    align-self: center;
+}
+.slide{
+    margin-right: 15px;
+}
+.active{
+    display: block;
+}
+.prevButton{
+    align-self: center;
+    padding-right: 40px;
+    padding-top: 40px;
+}
+.nextButton{
+    align-self: center;
+    padding-left: 40px;
+    padding-top: 40px;
+}
