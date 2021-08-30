@@ -1,3 +1,4 @@
+from app.project.serializers import serialize_project
 import json
 
 from flask.globals import request
@@ -6,32 +7,31 @@ from tests.functional.project.utils import create_project
 from tests.functional.bases.base_without_create_project_author import BaseWithoutCreateProjectAuthorTestCase
 
 
-class StatusFavoriteProjectsTestCase(BaseWithoutCreateProjectAuthorTestCase):
+class GetProjectListTestCase(BaseWithoutCreateProjectAuthorTestCase):
 
-    def test_status_favorite_project_empty(self):
+    def test_get_project_list_empty(self):
 
         with self.app.test_client() as test_client:
 
-            response = test_client.post('/projects/status_favorites/')
+            response = test_client.get('/projects/')
             data = json.loads(response.data)
 
             assert response.status_code == 200
-            assert data["status"] == "success"
-            assert len(data["projects"]) == 0
+            assert len(data) == 0
 
-    def test_status_favorite_project_one_project_zero_like(self):
+    def test_get_project_list_one_project_zero_like(self):
 
         with self.app.test_client() as test_client:
             project = create_project()
 
-            response = test_client.post('/projects/status_favorites/')
+            response = test_client.get('/projects/')
             data = json.loads(response.data)
 
             assert response.status_code == 200
-            assert data["status"] == "success"
-            assert len(data["projects"]) == 0
+            assert len(data) == 1
+            assert data[0] == {**serialize_project(project), 'count_likes': 0}
 
-    def test_status_favorite_project_one_project_one_like(self):
+    def test_get_project_list_one_project_one_like(self):
 
         with self.app.test_client() as test_client:
             sign_in(test_client)
@@ -39,33 +39,31 @@ class StatusFavoriteProjectsTestCase(BaseWithoutCreateProjectAuthorTestCase):
 
             test_client.post('/projects/like/', data={"project_id": project.id})
     
-            response = test_client.post('/projects/status_favorites/')
+            response = test_client.get('/projects/')
             data = json.loads(response.data)
 
             assert response.status_code == 200
-            assert data["status"] == "success"
-            assert len(data["projects"]) == 1
-            assert data["projects"][0][0] == 1
-            assert data["projects"][0][1] == 1
+            assert len(data) == 1
+            assert data[0] == {**serialize_project(project), 'count_likes': 1}
 
-    def test_status_favorite_project_one_project_one_like_one_dislike(self):
+    def test_get_project_list_one_project_one_like_one_dislike(self):
 
         with self.app.test_client() as test_client:
             sign_in(test_client)
             project = create_project()
         
             test_client.post('/projects/like/', data={"project_id": project.id})
-            response = test_client.post('/projects/status_favorites/')
+            response = test_client.get('/projects/')
             
             test_client.post('/projects/like/', data={"project_id": project.id})
-            response = test_client.post('/projects/status_favorites/')
+            response = test_client.get('/projects/')
             data = json.loads(response.data)
 
             assert response.status_code == 200
-            assert data["status"] == "success"
-            assert len(data["projects"]) == 0
+            assert len(data) == 1
+            assert data[0] == {**serialize_project(project), 'count_likes': 0}
 
-    def test_status_favorite_project_one_project_double_like(self):
+    def test_get_project_list_one_project_double_like(self):
 
         with self.app.test_client() as test_client:
             sign_in(test_client)
@@ -77,11 +75,9 @@ class StatusFavoriteProjectsTestCase(BaseWithoutCreateProjectAuthorTestCase):
             sign_in(test_client)
             test_client.post('/projects/like/', data={"project_id": project.id})
 
-            response = test_client.post('/projects/status_favorites/')
+            response = test_client.get('/projects/')
             data = json.loads(response.data)
 
             assert response.status_code == 200
-            assert data["status"] == "success"
-            assert len(data["projects"]) == 1
-            assert data["projects"][0][0] == 1
-            assert data["projects"][0][1] == 2
+            assert len(data) == 1
+            assert data[0] == {**serialize_project(project), 'count_likes': 2}

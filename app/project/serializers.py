@@ -1,23 +1,26 @@
 from typing import List
 
-## Circular imports into User Routes
-# from app.project.comment.models import ProjectComment
-# from app.project.models import Project
-# from app.project.story.models import ProjectStory
-
 
 def serialize_project(project) -> dict:
-# def serialize_project(project: Project) -> dict:
     return {
         'id': project.id,
         'title': project.title,
         'description': project.description,
-        'website': project.website
+        'website': project.website,
+    }
+
+
+def serialize_project_with_count_likes(project) -> dict:
+    return {
+        'id': project.id,
+        'title': project.title,
+        'description': project.description,
+        'website': project.website,
+        'count_likes': project.count_likes if project.count_likes is not None else 0
     }
 
 
 def serialize_project_comments(comments) -> list:
-# def serialize_project_comments(comments: List[ProjectComment]) -> list:
     result = []
 
     for comment in comments:
@@ -35,7 +38,6 @@ def serialize_project_comments(comments) -> list:
 
 
 def serialize_project_story(story) -> dict:
-# def serialize_project_story(story: ProjectStory) -> dict:
     return {
         'id': story.id,
         'author': {

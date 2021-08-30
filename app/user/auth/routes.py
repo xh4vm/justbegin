@@ -25,7 +25,7 @@ class Auth(FlaskView):
         instance : IAuth = get_auth_instance()
         return instance.sign_in(email=validated_request.get("email"), password=validated_request.get("password"))
 
-    @route('/sign_up/', methods=["PUT"])
+    @route('/sign_up/', methods=["POST"])
     @request_validation_required(put_user_schema, JSON)
     @already_auth(response=AuthExceptions.ALREADY_AUTH, code=208)
     def sign_up(self, validated_request : dict):

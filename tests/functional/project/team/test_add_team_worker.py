@@ -22,7 +22,7 @@ class ProjectAddTeamWorkerTestCase(BaseTestCase):
 
             team_worker_data = {"email": user.email, "project_id": project.id, "worker_role_ids": [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id]}
 
-            response = test_client.put(f'/projects/{project.id}/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
+            response = test_client.post(f'/projects/{project.id}/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
             
             assert response.status_code == 401
 
@@ -35,7 +35,7 @@ class ProjectAddTeamWorkerTestCase(BaseTestCase):
 
             team_worker_data = {"email": user.email, "project_id": project.id, "worker_role_ids": [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id]}
 
-            response = test_client.put(f'/projects/{project.id}/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
+            response = test_client.post(f'/projects/{project.id}/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
 
             assert response.status_code == 201
 
@@ -48,7 +48,7 @@ class ProjectAddTeamWorkerTestCase(BaseTestCase):
 
             team_worker_data = {"email": "asd", "project_id": project.id, "worker_role_ids": [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id]}
 
-            response = test_client.put(f'/projects/{project.id}/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
+            response = test_client.post(f'/projects/{project.id}/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
 
             assert response.status_code == 400
     
@@ -64,7 +64,7 @@ class ProjectAddTeamWorkerTestCase(BaseTestCase):
 
             team_worker_data = {"email": user.email, "project_id": project.id, "worker_role_ids": [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id]}
 
-            response = test_client.put(f'/projects/{project.id}/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
+            response = test_client.post(f'/projects/{project.id}/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
 
             assert response.status_code == 400
             assert json.loads(response.data) == ProjectExceptions.IS_NOT_PROJECT_ADMIN
@@ -77,6 +77,6 @@ class ProjectAddTeamWorkerTestCase(BaseTestCase):
 
             team_worker_data = {"email": user.email, "project_id": "1", "worker_role_ids": [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id]}
 
-            response = test_client.put(f'/projects/1/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
+            response = test_client.post(f'/projects/1/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
 
             assert response.status_code == 404

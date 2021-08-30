@@ -19,7 +19,7 @@ class Teams(FlaskView):
     @project_required
     @request_validation_required(schema=put_team_worker_schema, req_type=JSON)
     @verify_project_authorship(req_type=JSON)
-    @route('/<int:project_id>/add_team_worker/', methods=['PUT'])
+    @route('/<int:project_id>/add_team_worker/', methods=['POST'])
     def add_team_worker(self, project: Project, validated_request : dict):
 
         user = User.query.filter_by(email=validated_request.get('email')).first()

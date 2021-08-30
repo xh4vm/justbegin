@@ -18,7 +18,7 @@ def request_create_project(client, title: str = None, description: str = None, w
         'website': f"{random_string()}.com",
     }
 
-    response = client.put('/projects/', data=project_data)
+    response = client.post('/projects/', data=project_data)
 
     if response.status_code >= 400:
         abort(response.status_code)
