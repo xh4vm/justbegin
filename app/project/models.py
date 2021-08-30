@@ -1,7 +1,7 @@
 from werkzeug.exceptions import abort
 from ..user.auth.utils import get_auth_instance
 from sqlalchemy.event.api import listens_for
-from .team.models import TeamWorker, WorkerRole
+from .team.models import Teammates, WorkerRole
 from sqlalchemy.sql.functions import func
 from typing import List
 
@@ -100,17 +100,17 @@ class Project(Model):
 
     def add_worker(self, user_id : int, worker_role_ids : list) -> None:
         for worker_role_id in worker_role_ids:
-            team_worker : TeamWorker = TeamWorker(user_id=user_id, project_id=self.id, worker_role_id=worker_role_id)
+            team_worker : Teammates = Teammates(user_id=user_id, project_id=self.id, worker_role_id=worker_role_id)
             self.session.add(team_worker)
         
         self.session.commit()
 
     def exclude_worker(self, user_id : int) -> None:
-        TeamWorker.query.filter_by(user_id=user_id, project_id=self.id).delete()
+        Teammates.query.filter_by(user_id=user_id, project_id=self.id).delete()
         self.session.commit()
 
     def delete_worker_role(self, user_id : int, worker_role_id : int) -> None:
-        TeamWorker.query \
+        Teammates.query \
             .filter_by(user_id=user_id, project_id=self.id, worker_role_id=worker_role_id) \
             .delete()
         self.session.commit()
@@ -133,6 +133,6 @@ def create_author_project(mapper, connection, target):
     if auth_data is None:
         abort(401)
         
-    connection.execute(TeamWorker.__table__.insert() \
+    connection.execute(Teammates.__table__.insert() \
         .values(user_id=auth_data[0], project_id=target.id, worker_role_id=WorkerRole.get_admin().id))
 

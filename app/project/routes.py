@@ -8,11 +8,10 @@ from app import db
 from ..user.decorators import user_required, check_auth
 from app.decorators import request_validation_required
 from app.project.models import FavoriteProject
-from app.project.decorators import verify_project_authorship
-from .exceptions import ProjectExceptions
+from app.project.decorators import project_required, verify_project_authorship
 from .models import Project
 from .serializers import serialize_project_with_count_likes
-from .schemas import post_like_schema, delete_project_schema, put_project_schema
+from .schemas import create_project_schema
 from sqlalchemy.sql.expression import null
 from itertools import chain
 
@@ -43,7 +42,7 @@ class Projects(FlaskView):
         return jsonify(list(map(serialize_project_with_count_likes, projects))), 200
 
     @check_auth
-    @request_validation_required(put_project_schema)
+    @request_validation_required(create_project_schema)
     @route("/", methods=["POST"])
     def create(self, validated_request : dict):
         project = Project(validated_request.get('title'), validated_request.get('description'), validated_request.get('website'))
@@ -53,29 +52,18 @@ class Projects(FlaskView):
         return jsonify({'id': project.id}), 201
 
     @user_required
-    @route('/like/', methods=['POST'])
-    @request_validation_required(post_like_schema)
-    def like(self, user : User, validated_request: dict):
-        project_id = validated_request.get('project_id')
-
-        project = Project.query.get(project_id)
-
-        if project is None:
-            return jsonify(ProjectExceptions.BAD_PROJECT_ID_DATA), 400
+    @project_required
+    @route('/<int:project_id>/like/', methods=['POST'])
+    def like(self, user : User, project: Project):
 
         status = project.like(user.id)
-
-        return jsonify({"status": "success", "count": project.get_count_likes(), "active": status}), 200
+        return jsonify({"count": project.get_count_likes(), "active": status}), 200
 
     @check_auth
-    @verify_project_authorship()
-    @request_validation_required(delete_project_schema)
-    @route('/remove/', methods=['DELETE'])
-    def remove(self, validated_request: dict):
-        project = Project.query.get(validated_request.get('project_id'))
-
-        if project is None:
-            return jsonify(ProjectExceptions.BAD_PROJECT_ID_DATA), 400
+    @project_required
+    @verify_project_authorship
+    @route('/<int:project_id>/delete/', methods=['DELETE'])
+    def delete(self, project: Project):
 
         self.session.delete(project)
         self.session.commit()

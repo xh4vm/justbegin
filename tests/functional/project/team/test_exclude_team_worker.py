@@ -1,16 +1,12 @@
-import json
-from app.project.exceptions import ProjectExceptions
-from tests.utils import random_string
-from tests.functional.header import Header
-from tests.functional.user.auth.utils import create_user, sign_in, request_logout
+from tests.functional.user.auth.utils import sign_in, request_logout
 from tests.functional.bases.base import BaseTestCase
 from tests.functional.project.utils import request_create_project
 from tests.functional.user.auth.utils import sign_in
-from app.project.team.models import TeamWorker, WorkerRole
+from app.project.team.models import Teammates, WorkerRole
 from tests.functional.project.team.utils import add_team_worker_roles
 
 
-class ProjectExcludeTeamWorkerTestCase(BaseTestCase):
+class ProjectExcludeTeammatesTestCase(BaseTestCase):
 
     def test_exclude_team_worker_check_auth_fail(self):
 
@@ -37,7 +33,7 @@ class ProjectExcludeTeamWorkerTestCase(BaseTestCase):
             response = test_client.delete(f'/projects/{project.id}/exclude_team_worker/', data=team_worker_data)
 
             assert response.status_code == 200
-            assert len(TeamWorker.query.filter_by(user_id=user.id, project_id=project.id).all()) == 0
+            assert len(Teammates.query.filter_by(user_id=user.id, project_id=project.id).all()) == 0
 
     def test_exclude_team_worker_multiple_success(self):
         
@@ -53,7 +49,7 @@ class ProjectExcludeTeamWorkerTestCase(BaseTestCase):
             response = test_client.delete(f'/projects/{project.id}/exclude_team_worker/', data=team_worker_data)
 
             assert response.status_code == 200
-            assert len(TeamWorker.query.filter_by(user_id=user.id, project_id=project.id).all()) == 0
+            assert len(Teammates.query.filter_by(user_id=user.id, project_id=project.id).all()) == 0
 
     def test_exclude_team_worker_users_not_exists(self):
         
@@ -83,7 +79,6 @@ class ProjectExcludeTeamWorkerTestCase(BaseTestCase):
             response = test_client.delete(f'/projects/{project.id}/exclude_team_worker/', data=team_worker_data)
 
             assert response.status_code == 400
-            assert json.loads(response.data) == ProjectExceptions.IS_NOT_PROJECT_ADMIN
 
     def test_exclude_team_worker_project_required(self):
         

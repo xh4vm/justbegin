@@ -1,6 +1,4 @@
 import json
-from app.project.exceptions import ProjectExceptions
-from tests.utils import random_string
 from tests.functional.header import Header
 from tests.functional.user.auth.utils import create_user, sign_in, request_logout
 from tests.functional.bases.base import BaseTestCase
@@ -67,7 +65,6 @@ class ProjectAddTeamWorkerTestCase(BaseTestCase):
             response = test_client.post(f'/projects/{project.id}/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
 
             assert response.status_code == 400
-            assert json.loads(response.data) == ProjectExceptions.IS_NOT_PROJECT_ADMIN
 
     def test_add_team_worker_project_required(self):
         

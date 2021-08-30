@@ -88,3 +88,6 @@ def create_project_follower(user_id: int = None, project_id: int = None) -> Proj
     db.session.commit()
 
     return follower
+
+def request_like_project(client, project_id : int):
+    return client.post(f'/projects/{project_id}/like/')

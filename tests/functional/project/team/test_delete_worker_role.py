@@ -1,12 +1,8 @@
-import json
-from app.project.exceptions import ProjectExceptions
-from tests.utils import random_string
-from tests.functional.header import Header
-from tests.functional.user.auth.utils import create_user, sign_in, request_logout
+from tests.functional.user.auth.utils import sign_in, request_logout
 from tests.functional.bases.base import BaseTestCase
 from tests.functional.project.utils import request_create_project
 from tests.functional.user.auth.utils import sign_in
-from app.project.team.models import TeamWorker, WorkerRole
+from app.project.team.models import Teammates, WorkerRole
 from tests.functional.project.team.utils import add_team_worker_roles
 
 
@@ -37,7 +33,7 @@ class ProjectDeleteWorkerRoleTestCase(BaseTestCase):
             response = test_client.delete(f'/projects/{project.id}/delete_worker_role/', data=team_worker_data)
 
             assert response.status_code == 200
-            assert len(TeamWorker.query.filter_by(user_id=user.id, project_id=project.id).all()) == 0
+            assert len(Teammates.query.filter_by(user_id=user.id, project_id=project.id).all()) == 0
 
     def test_delete_worker_role_multiple_success(self):
         
@@ -53,8 +49,8 @@ class ProjectDeleteWorkerRoleTestCase(BaseTestCase):
             response = test_client.delete(f'/projects/{project.id}/delete_worker_role/', data=team_worker_data)
 
             assert response.status_code == 200
-            assert len(TeamWorker.query.filter_by(user_id=user.id, project_id=project.id).all()) == 2
-            assert TeamWorker.query.filter_by(user_id=user.id, project_id=project.id, worker_role_id=WorkerRole.get_admin().id).first() is None
+            assert len(Teammates.query.filter_by(user_id=user.id, project_id=project.id).all()) == 2
+            assert Teammates.query.filter_by(user_id=user.id, project_id=project.id, worker_role_id=WorkerRole.get_admin().id).first() is None
 
     def test_delete_worker_role_users_not_exists(self):
         
@@ -84,7 +80,6 @@ class ProjectDeleteWorkerRoleTestCase(BaseTestCase):
             response = test_client.delete(f'/projects/{project.id}/delete_worker_role/', data=team_worker_data)
 
             assert response.status_code == 400
-            assert json.loads(response.data) == ProjectExceptions.IS_NOT_PROJECT_ADMIN
 
     def test_delete_worker_role_project_required(self):
         
