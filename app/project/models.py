@@ -1,7 +1,7 @@
 from werkzeug.exceptions import abort
 from ..user.auth.utils import get_auth_instance
 from sqlalchemy.event.api import listens_for
-from .team.models import Teammates, WorkerRole
+from .team.models import Teammates
 from sqlalchemy.sql.functions import func
 from typing import List
 
@@ -134,5 +134,5 @@ def create_author_project(mapper, connection, target):
         abort(401)
         
     connection.execute(Teammates.__table__.insert() \
-        .values(user_id=auth_data[0], project_id=target.id, teammate_role_id=WorkerRole.get_admin().id))
+        .values(user_id=auth_data[0], project_id=target.id, teammate_role_id=Teammates.get_role_id()))
 

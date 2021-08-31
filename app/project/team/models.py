@@ -8,6 +8,14 @@ from sqlalchemy.sql.sqltypes import BigInteger, String, Integer
 
 class Teammates(Model):
     
+    ROLES = {
+        "Administrator": 1,
+        "Editor": 2,
+        "Reviewer": 3,
+        "Investor": 4,
+        
+    }
+
     __table_args__ = (
         UniqueConstraint('user_id', 'project_id', 'teammate_role_id', name='uq_team_worker'),
     )
@@ -20,16 +28,7 @@ class Teammates(Model):
         self.user_id = user_id
         self.project_id = project_id
         self.teammate_role_id = teammate_role_id
-        
-
-class WorkerRole(Model):
-    __admin_name__ = "Administrator"
-
-    name = Column(String(128), unique=True)
-
-    def __init__(self, name : str):
-        self.name = name
 
     @staticmethod
-    def get_admin():
-        return WorkerRole.query.filter_by(name=WorkerRole.__admin_name__).first()
+    def get_role_id(role_name="Administrator"):
+        return Teammates.ROLES[role_name]

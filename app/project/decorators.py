@@ -1,4 +1,4 @@
-from .team.models import Teammates, WorkerRole
+from .team.models import Teammates
 from app.utils.request_type.Form import Form
 from app.utils.request_type import IRequestType
 from functools import wraps
@@ -18,10 +18,9 @@ def verify_project_authorship(f):
             abort(404)
 
         project = kwargs['project']
-        admin_role = WorkerRole.get_admin()
 
         if Teammates.query \
-            .filter_by(user_id=user_id, project_id=project.id, teammate_role_id=admin_role.id) \
+            .filter_by(user_id=user_id, project_id=project.id, teammate_role_id=Teammates.get_role_id()) \
             .first() is None:
             abort(400)
 

@@ -2,7 +2,7 @@ from tests.functional.user.auth.utils import sign_in, request_logout
 from tests.functional.bases.base import BaseTestCase
 from tests.functional.project.utils import request_create_project
 from tests.functional.user.auth.utils import sign_in
-from app.project.team.models import Teammates, WorkerRole
+from app.project.team.models import Teammates
 from tests.functional.project.team.utils import add_teammate_roles
 
 
@@ -42,7 +42,7 @@ class ProjectExcludeTeammatesTestCase(BaseTestCase):
             user = sign_in(test_client)
             project, response = request_create_project(test_client)
 
-            add_teammate_roles(user.id, project.id, [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id])
+            add_teammate_roles(user.id, project.id, [Teammates.get_role_id("Editor"), Teammates.get_role_id("Reviewer")])
 
             teammate_data = {"user_id": user.id, "project_id": project.id}
 
