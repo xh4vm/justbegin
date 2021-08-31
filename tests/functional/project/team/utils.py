@@ -1,10 +1,10 @@
-from app.project.team.models import WorkerRole, Teammates
+from app.project.team.models import Teammates
 from app.db import db
 
 
-def add_team_worker_roles(user_id : int, project_id : int, worker_role_ids : list) -> None:
-    for worker_role_id in worker_role_ids:
-        team_worker : Teammates = Teammates(user_id=user_id, project_id=project_id, worker_role_id=worker_role_id)
-        db.session.add(team_worker)
+def add_teammate_roles(user_id : int, project_id : int, teammate_role_ids : list) -> None:
+    for teammate_role_id in teammate_role_ids:
+        teammate : Teammates = Teammates(user_id=user_id, project_id=project_id, teammate_role_id=teammate_role_id)
+        db.session.add(teammate)
         
     db.session.commit()

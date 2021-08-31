@@ -11,46 +11,46 @@ from app import db
 
 class ProjectAddTeamWorkerTestCase(BaseTestCase):
 
-    def test_add_team_worker_check_auth_fail(self):
+    def test_add_teammate_check_auth_fail(self):
 
         with self.app.test_client() as test_client:
             user = sign_in(test_client)
             project, response = request_create_project(test_client)
             request_logout(test_client)
 
-            team_worker_data = {"email": user.email, "project_id": project.id, "worker_role_ids": [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id]}
+            teammate_data = {"email": user.email, "project_id": project.id, "teammate_role_ids": [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id]}
 
-            response = test_client.post(f'/projects/{project.id}/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
+            response = test_client.post(f'/projects/{project.id}/add_teammate/', data=json.dumps(teammate_data), headers=Header.json)
             
             assert response.status_code == 401
 
-    def test_add_team_worker_success(self):
+    def test_add_teammate_success(self):
         
         with self.app.test_client() as test_client:
 
             user = sign_in(test_client)
             project, response = request_create_project(test_client)
 
-            team_worker_data = {"email": user.email, "project_id": project.id, "worker_role_ids": [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id]}
+            teammate_data = {"email": user.email, "project_id": project.id, "teammate_role_ids": [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id]}
 
-            response = test_client.post(f'/projects/{project.id}/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
+            response = test_client.post(f'/projects/{project.id}/add_teammate/', data=json.dumps(teammate_data), headers=Header.json)
 
             assert response.status_code == 201
 
-    def test_add_team_worker_users_not_exists(self):
+    def test_add_teammate_users_not_exists(self):
         
         with self.app.test_client() as test_client:
 
             user = sign_in(test_client)
             project, response = request_create_project(test_client)
 
-            team_worker_data = {"email": "asd", "project_id": project.id, "worker_role_ids": [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id]}
+            teammate_data = {"email": "asd", "project_id": project.id, "teammate_role_ids": [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id]}
 
-            response = test_client.post(f'/projects/{project.id}/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
+            response = test_client.post(f'/projects/{project.id}/add_teammate/', data=json.dumps(teammate_data), headers=Header.json)
 
             assert response.status_code == 400
     
-    def test_add_team_worker_wrong_author_project(self):
+    def test_add_teammate_wrong_author_project(self):
         
         with self.app.test_client() as test_client:
 
@@ -60,20 +60,20 @@ class ProjectAddTeamWorkerTestCase(BaseTestCase):
 
             user = sign_in(test_client)
 
-            team_worker_data = {"email": user.email, "project_id": project.id, "worker_role_ids": [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id]}
+            teammate_data = {"email": user.email, "project_id": project.id, "teammate_role_ids": [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id]}
 
-            response = test_client.post(f'/projects/{project.id}/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
+            response = test_client.post(f'/projects/{project.id}/add_teammate/', data=json.dumps(teammate_data), headers=Header.json)
 
             assert response.status_code == 400
 
-    def test_add_team_worker_project_required(self):
+    def test_add_teammate_project_required(self):
         
         with self.app.test_client() as test_client:
 
             user = sign_in(test_client)
 
-            team_worker_data = {"email": user.email, "project_id": "1", "worker_role_ids": [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id]}
+            teammate_data = {"email": user.email, "project_id": "1", "teammate_role_ids": [WorkerRole.query.filter_by(name="Developer").first().id, WorkerRole.query.filter_by(name="Manager").first().id]}
 
-            response = test_client.post(f'/projects/1/add_team_worker/', data=json.dumps(team_worker_data), headers=Header.json)
+            response = test_client.post(f'/projects/1/add_teammate/', data=json.dumps(teammate_data), headers=Header.json)
 
             assert response.status_code == 404

@@ -98,20 +98,20 @@ class Project(Model):
             self.session.delete(follower)
             self.session.commit()
 
-    def add_worker(self, user_id : int, worker_role_ids : list) -> None:
-        for worker_role_id in worker_role_ids:
-            team_worker : Teammates = Teammates(user_id=user_id, project_id=self.id, worker_role_id=worker_role_id)
+    def add_teammate(self, user_id : int, teammate_role_ids : list) -> None:
+        for teammate_role_id in teammate_role_ids:
+            team_worker : Teammates = Teammates(user_id=user_id, project_id=self.id, teammate_role_id=teammate_role_id)
             self.session.add(team_worker)
         
         self.session.commit()
 
-    def exclude_worker(self, user_id : int) -> None:
+    def exclude_teammate(self, user_id : int) -> None:
         Teammates.query.filter_by(user_id=user_id, project_id=self.id).delete()
         self.session.commit()
 
-    def delete_worker_role(self, user_id : int, worker_role_id : int) -> None:
+    def delete_teammate_role(self, user_id : int, teammate_role_id : int) -> None:
         Teammates.query \
-            .filter_by(user_id=user_id, project_id=self.id, worker_role_id=worker_role_id) \
+            .filter_by(user_id=user_id, project_id=self.id, teammate_role_id=teammate_role_id) \
             .delete()
         self.session.commit()
 
@@ -134,5 +134,5 @@ def create_author_project(mapper, connection, target):
         abort(401)
         
     connection.execute(Teammates.__table__.insert() \
-        .values(user_id=auth_data[0], project_id=target.id, worker_role_id=WorkerRole.get_admin().id))
+        .values(user_id=auth_data[0], project_id=target.id, teammate_role_id=WorkerRole.get_admin().id))
 

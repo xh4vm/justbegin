@@ -21,7 +21,7 @@ def verify_project_authorship(f):
         admin_role = WorkerRole.get_admin()
 
         if Teammates.query \
-            .filter_by(user_id=user_id, project_id=project.id, worker_role_id=admin_role.id) \
+            .filter_by(user_id=user_id, project_id=project.id, teammate_role_id=admin_role.id) \
             .first() is None:
             abort(400)
 

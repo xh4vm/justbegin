@@ -9,17 +9,17 @@ from sqlalchemy.sql.sqltypes import BigInteger, String, Integer
 class Teammates(Model):
     
     __table_args__ = (
-        UniqueConstraint('user_id', 'project_id', 'worker_role_id', name='uq_team_worker'),
+        UniqueConstraint('user_id', 'project_id', 'teammate_role_id', name='uq_team_worker'),
     )
 
     user_id = Column(ModelId, ForeignKey('users.id'))
     project_id = Column(ModelId, ForeignKey('projects.id'))
-    worker_role_id = Column(ModelId)
+    teammate_role_id = Column(ModelId)
     
-    def __init__(self, user_id : int, project_id : int, worker_role_id : int):
+    def __init__(self, user_id : int, project_id : int, teammate_role_id : int):
         self.user_id = user_id
         self.project_id = project_id
-        self.worker_role_id = worker_role_id
+        self.teammate_role_id = teammate_role_id
         
 
 class WorkerRole(Model):

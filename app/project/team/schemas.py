@@ -1,29 +1,22 @@
 from marshmallow import Schema, fields
 
 
-class PutTeamWorkerSchema(Schema):
+class AddTeammateSchema(Schema):
     email = fields.String(required=True)
     project_id = fields.Integer(required=True)
-    worker_role_ids = fields.List(fields.Integer(required=True))
+    teammate_role_ids = fields.List(fields.Integer(required=True))
 
 
-class DeleteTeamWorkerSchema(Schema):
+class DeleteTeammateSchema(Schema):
     user_id = fields.Integer(required=True)
     project_id = fields.Integer(required=True)
 
 
-class DeleteWorkerRoleSchema(Schema):
+class DeleteTeammateRoleSchema(Schema):
     user_id = fields.Integer(required=True)
     project_id = fields.Integer(required=True)
-    worker_role_id = fields.Integer(required=True)
+    teammate_role_id = fields.Integer(required=True)
 
-
-class PutTeamSchema(Schema):
-    user_id = fields.Integer(required=True)
-    project_id = fields.Integer(required=True)
-
-
-put_team_worker_schema = PutTeamWorkerSchema()
-delete_team_worker_schema = DeleteTeamWorkerSchema()
-delete_worker_role_schema = DeleteWorkerRoleSchema()
-put_team_schema = PutTeamSchema()
+add_teammate_schema = AddTeammateSchema()
+delete_teammate_schema = DeleteTeammateSchema()
+delete_teammate_role_schema = DeleteTeammateRoleSchema()
