@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import styles from './Header.module.css'
 
 const scrollHandler = (e) => {
@@ -13,6 +12,10 @@ const scrollHandler = (e) => {
   }
 
 export const Header = () => {
+    const ent = () => {
+        document.querySelector('#modal').classList.add(`${styles.activeModal}`)
+        document.querySelector('#MyAutorizationWrapper').classList.add(`${styles.MyAutorizationWrapper}`)
+    }
     useEffect(()=>{
         document.addEventListener('scroll', scrollHandler)
         return function () {
@@ -30,7 +33,7 @@ export const Header = () => {
                         <span className={styles.myHeaderLink}>Главная</span>
                         <span className={styles.myHeaderLink}>О нас</span>
                         <span className={styles.myHeaderLink}>Проекты</span>
-                        <Link to={'/biba'} className={styles.Link}><span className={styles.myHeaderLink}>Войти</span></Link>
+                        <span onClick={ent} className={styles.myHeaderLink}>Войти</span>
                     </nav>
                 </div>
             </header>

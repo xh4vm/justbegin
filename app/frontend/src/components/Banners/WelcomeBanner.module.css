@@ -20,4 +20,7 @@
 }
 .title{
     color: black;
+    display: flex;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
 }

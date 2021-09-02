@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './WelcomeBanner.module.css'
 
 export const WelcomeBanner = () => {
+    
     return (
         <>
             <div className={styles.bannerWrapper} style={{backgroundImage: "url(/images/background1.png)"}}>

@@ -18,6 +18,7 @@
 }
 .myHeaderLink{
     margin-right: 10px;
+    font-family: 'Montserrat', sans-serif;
 }
 .navBar{
     justify-self: end;
@@ -32,4 +33,13 @@
 }
 .myHeaderLink:hover{
     color:blue;
+}
+.activeModal{
+    opacity: 1 !important;
+    z-index: 400 !important;
+    /*transition: 0.5s !important;*/
+}
+.MyAutorizationWrapper{
+    top: 0px !important;
+    transition: 0.8s !important;
 }

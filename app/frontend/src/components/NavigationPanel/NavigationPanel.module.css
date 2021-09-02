@@ -12,6 +12,7 @@
     justify-content: space-around;
     align-items: center;
     height: 105px;
+    font-family: 'Montserrat', sans-serif;
 }
 .navBlock{
     background-color: rgb(18, 17, 17, 75%);
