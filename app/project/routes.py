@@ -7,10 +7,10 @@ from sqlalchemy.sql.functions import func
 from app import db
 from ..user.decorators import user_required, check_auth
 from app.decorators import request_validation_required
-from app.project.models import FavoriteProject
-from app.project.decorators import project_required, verify_project_authorship
+from app.project.models import ProjectLike
+from app.project.decorators import project_required, project_authorship_required
 from .models import Project
-from .serializers import serialize_project_with_count_likes
+from .serializers import serialize_project
 from .schemas import create_project_schema
 from sqlalchemy.sql.expression import null
 from itertools import chain
@@ -23,23 +23,23 @@ class Projects(FlaskView):
     def index(self):
         projects_with_likes = (Project
                     .query
-                    .with_entities(*Project.__table__.columns, func.count(FavoriteProject.project_id).label('count_likes'))
-                    .filter(Project.id == FavoriteProject.project_id)
-                    .group_by(FavoriteProject.project_id))
+                    .with_entities(*Project.__table__.columns, func.count(ProjectLike.project_id).label('count_likes'))
+                    .filter(Project.id == ProjectLike.project_id)
+                    .group_by(ProjectLike.project_id))
 
         projects = (Project
                     .query
                     .with_entities(*Project.__table__.columns, null().label('count_likes'))
                     .filter(
                         ~Project.id.in_(
-                            chain(*self.session.query(FavoriteProject.project_id).all())
+                            chain(*self.session.query(ProjectLike.project_id).all())
                         )
                     )
                     .union(projects_with_likes)
                     .order_by(Project.created_at)
                     .all())
 
-        return jsonify(list(map(serialize_project_with_count_likes, projects))), 200
+        return jsonify(list(map(serialize_project, projects))), 200
 
     @check_auth
     @request_validation_required(create_project_schema)
@@ -61,7 +61,7 @@ class Projects(FlaskView):
 
     @check_auth
     @project_required
-    @verify_project_authorship
+    @project_authorship_required
     @route('/<int:project_id>/delete/', methods=['DELETE'])
     def delete(self, project: Project):
 

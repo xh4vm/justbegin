@@ -23,17 +23,12 @@ class User(Model):
                                         order_by='ProjectStory.created_at.desc()',
                                         viewonly=True)
 
-    projects_development = relationship('Project',
-                                        secondary='join(Project, Teammates, '
-                                                    'Project.id == Teammates.project_id)',
-                                        secondaryjoin="User.id == Teammates.user_id",
-                                        order_by='Project.created_at.desc()',
-                                        viewonly=True)
-
-    # project_roles = relationship('Teammates',
-    #                             primaryjoin="User.id == Teammates.user_id",
-    #                             order_by='Teammates.created_at.desc()',
-    #                             viewonly=True)
+    projects = relationship('Project',
+                                secondary='join(Project, Teammate, '
+                                            'Project.id == Teammate.project_id)',
+                                secondaryjoin="User.id == Teammate.user_id",
+                                order_by='Project.created_at.desc()',
+                                viewonly=True)
 
     def __init__(self, nickname, email, password, telegram_nickname, avatar=None, first_name=None, last_name=None):
         self.nickname = nickname

@@ -1,7 +1,7 @@
 from werkzeug.exceptions import abort
 from ..user.auth.utils import get_auth_instance
 from sqlalchemy.event.api import listens_for
-from .team.models import Teammates
+from .teammate.models import Teammate
 from sqlalchemy.sql.functions import func
 from typing import List
 
@@ -33,22 +33,22 @@ class Project(Model):
 
     def _set_like(self, user_id : int) -> bool:
         self.session.add(
-            FavoriteProject(user_id=user_id, project_id=self.id))
+            ProjectLike(user_id=user_id, project_id=self.id))
         self.session.commit()
         return True
 
     def _unset_like(self, user_id : int) -> bool:
-        self.session.delete(FavoriteProject.query.filter_by(user_id=user_id, project_id=self.id).first())
+        self.session.delete(ProjectLike.query.filter_by(user_id=user_id, project_id=self.id).first())
         self.session.commit()
         return False
 
     def like(self, user_id : int) -> bool:
-        check_liked_project = FavoriteProject.query.filter_by(user_id=user_id, project_id=self.id).first()
+        check_liked_project = ProjectLike.query.filter_by(user_id=user_id, project_id=self.id).first()
         return self._set_like(user_id) if check_liked_project is None else self._unset_like(user_id)
 
     def get_count_likes(self):
-        favorites = self.session.query(func.count(FavoriteProject.project_id).label('count'))\
-            .group_by(FavoriteProject.project_id).first()
+        favorites = self.session.query(func.count(ProjectLike.project_id).label('count'))\
+            .group_by(ProjectLike.project_id).first()
 
         return favorites.count if favorites is not None else 0
 
@@ -98,28 +98,28 @@ class Project(Model):
             self.session.delete(follower)
             self.session.commit()
 
-    def add_teammate(self, user_id : int, teammate_role_ids : list) -> None:
-        for teammate_role_id in teammate_role_ids:
-            team_worker : Teammates = Teammates(user_id=user_id, project_id=self.id, teammate_role_id=teammate_role_id)
-            self.session.add(team_worker)
+    def add_teammate(self, user_id : int, role_ids : list) -> None:
+        for role_id in role_ids:
+            teammate : Teammate = Teammate(user_id=user_id, project_id=self.id, role_id=role_id)
+            self.session.add(teammate)
         
         self.session.commit()
 
     def exclude_teammate(self, user_id : int) -> None:
-        Teammates.query.filter_by(user_id=user_id, project_id=self.id).delete()
+        Teammate.query.filter_by(user_id=user_id, project_id=self.id).delete()
         self.session.commit()
 
-    def delete_teammate_role(self, user_id : int, teammate_role_id : int) -> None:
-        Teammates.query \
-            .filter_by(user_id=user_id, project_id=self.id, teammate_role_id=teammate_role_id) \
+    def delete_teammate_role(self, user_id : int, role_id : int) -> None:
+        Teammate.query \
+            .filter_by(user_id=user_id, project_id=self.id, role_id=role_id) \
             .delete()
         self.session.commit()
 
 
-class FavoriteProject(Model):
+class ProjectLike(Model):
 
     __table_args__ = (
-        UniqueConstraint('user_id', 'project_id', name='uq_favorite_project'),
+        UniqueConstraint('user_id', 'project_id', name='uq_project_like'),
     )
 
     user_id : int = Column(Integer, ForeignKey('users.id'), nullable=False)
@@ -133,6 +133,6 @@ def create_author_project(mapper, connection, target):
     if auth_data is None:
         abort(401)
         
-    connection.execute(Teammates.__table__.insert() \
-        .values(user_id=auth_data[0], project_id=target.id, teammate_role_id=Teammates.get_role_id()))
+    connection.execute(Teammate.__table__.insert() \
+        .values(user_id=auth_data[0], project_id=target.id, role_id=Teammate.ADMIN))
 

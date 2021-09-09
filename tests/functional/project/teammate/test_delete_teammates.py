@@ -2,11 +2,11 @@ from tests.functional.user.auth.utils import sign_in, request_logout
 from tests.functional.bases.base import BaseTestCase
 from tests.functional.project.utils import request_create_project
 from tests.functional.user.auth.utils import sign_in
-from app.project.team.models import Teammates
-from tests.functional.project.team.utils import add_teammate_roles
+from app.project.teammate.models import Teammate
+from tests.functional.project.teammate.utils import add_teammate_roles
 
 
-class ProjectExcludeTeammatesTestCase(BaseTestCase):
+class ProjectExcludeTeammateTestCase(BaseTestCase):
 
     def test_exclude_teammate_check_auth_fail(self):
 
@@ -17,7 +17,7 @@ class ProjectExcludeTeammatesTestCase(BaseTestCase):
 
             teammate_data = {"user_id": user.id, "project_id": project.id}
 
-            response = test_client.delete(f'/projects/{project.id}/exclude_teammate/', data=teammate_data)
+            response = test_client.delete(f'/projects/{project.id}/teammates/', data=teammate_data)
             
             assert response.status_code == 401
 
@@ -30,10 +30,10 @@ class ProjectExcludeTeammatesTestCase(BaseTestCase):
 
             teammate_data = {"user_id": user.id, "project_id": project.id}
 
-            response = test_client.delete(f'/projects/{project.id}/exclude_teammate/', data=teammate_data)
+            response = test_client.delete(f'/projects/{project.id}/teammates/', data=teammate_data)
 
             assert response.status_code == 200
-            assert len(Teammates.query.filter_by(user_id=user.id, project_id=project.id).all()) == 0
+            assert len(Teammate.query.filter_by(user_id=user.id, project_id=project.id).all()) == 0
 
     def test_exclude_teammate_multiple_success(self):
         
@@ -42,14 +42,14 @@ class ProjectExcludeTeammatesTestCase(BaseTestCase):
             user = sign_in(test_client)
             project, response = request_create_project(test_client)
 
-            add_teammate_roles(user.id, project.id, [Teammates.get_role_id("Editor"), Teammates.get_role_id("Reviewer")])
+            add_teammate_roles(user.id, project.id, [Teammate.EDITOR, Teammate.REVIEWER])
 
             teammate_data = {"user_id": user.id, "project_id": project.id}
 
-            response = test_client.delete(f'/projects/{project.id}/exclude_teammate/', data=teammate_data)
+            response = test_client.delete(f'/projects/{project.id}/teammates/', data=teammate_data)
 
             assert response.status_code == 200
-            assert len(Teammates.query.filter_by(user_id=user.id, project_id=project.id).all()) == 0
+            assert len(Teammate.query.filter_by(user_id=user.id, project_id=project.id).all()) == 0
 
     def test_exclude_teammate_users_not_exists(self):
         
@@ -60,7 +60,7 @@ class ProjectExcludeTeammatesTestCase(BaseTestCase):
 
             teammate_data = {"user_id": "asd", "project_id": project.id}
 
-            response = test_client.delete(f'/projects/{project.id}/exclude_teammate/', data=teammate_data)
+            response = test_client.delete(f'/projects/{project.id}/teammates/', data=teammate_data)
 
             assert response.status_code == 400
     
@@ -76,7 +76,7 @@ class ProjectExcludeTeammatesTestCase(BaseTestCase):
 
             teammate_data = {"user_id": user.id, "project_id": project.id}
 
-            response = test_client.delete(f'/projects/{project.id}/exclude_teammate/', data=teammate_data)
+            response = test_client.delete(f'/projects/{project.id}/teammates/', data=teammate_data)
 
             assert response.status_code == 400
 
@@ -88,6 +88,6 @@ class ProjectExcludeTeammatesTestCase(BaseTestCase):
 
             teammate_data = {"user_id": user.id, "project_id": "1"}
 
-            response = test_client.delete(f'/projects/1/exclude_teammate/', data=teammate_data)
+            response = test_client.delete(f'/projects/1/teammates/', data=teammate_data)
 
             assert response.status_code == 404

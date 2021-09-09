@@ -2,7 +2,7 @@ from tests.functional.user.auth.utils import sign_in
 from tests.functional.bases.base import BaseTestCase
 from tests.functional.project.utils import request_create_project
 from tests.functional.user.auth.utils import sign_in
-from app.project.team.models import Teammates
+from app.project.teammate.models import Teammate
 from app import db 
 
 
@@ -14,8 +14,8 @@ class ProjectCreateAuthorTestCase(BaseTestCase):
             user = sign_in(test_client)
             project, response = request_create_project(test_client)
 
-            teammate = Teammates.query \
-                .filter_by(user_id=user.id, project_id=project.id, teammate_role_id=Teammates.get_role_id()) \
+            teammate = Teammate.query \
+                .filter_by(user_id=user.id, project_id=project.id, role_id=Teammate.ADMIN) \
                 .first()
             
             assert response.status_code == 201

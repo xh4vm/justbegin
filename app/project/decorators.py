@@ -1,4 +1,4 @@
-from .team.models import Teammates
+from .teammate.models import Teammate
 from app.utils.request_type.Form import Form
 from app.utils.request_type import IRequestType
 from functools import wraps
@@ -9,18 +9,18 @@ from .story.models import ProjectStory
 from ..user.auth.utils import get_auth_instance
 
 
-def verify_project_authorship(f):
+def project_authorship_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         user_id, claims = get_auth_instance().get_current_user_data_from_token()
 
         if 'project' not in kwargs:
-            abort(404)
+            abort(500)
 
         project = kwargs['project']
 
-        if Teammates.query \
-            .filter_by(user_id=user_id, project_id=project.id, teammate_role_id=Teammates.get_role_id()) \
+        if Teammate.query \
+            .filter_by(user_id=user_id, project_id=project.id, role_id=Teammate.ADMIN) \
             .first() is None:
             abort(400)
 

@@ -1,4 +1,4 @@
-from app.project.team.models import Teammates
+from app.project.teammate.models import Teammate
 import json
 from tests.functional.header import Header
 from tests.functional.user.auth.utils import create_user, sign_in, request_logout
@@ -6,7 +6,6 @@ from tests.functional.bases.base import BaseTestCase
 from tests.functional.project.utils import request_create_project
 from tests.functional.header import Header
 from tests.functional.user.auth.utils import sign_in
-from app import db 
 
 
 class ProjectAddTeamWorkerTestCase(BaseTestCase):
@@ -18,9 +17,9 @@ class ProjectAddTeamWorkerTestCase(BaseTestCase):
             project, response = request_create_project(test_client)
             request_logout(test_client)
 
-            teammate_data = {"email": user.email, "project_id": project.id, "teammate_role_ids": [Teammates.get_role_id("Editor"), Teammates.get_role_id("Reviewer")]}
+            teammate_data = {"email": user.email, "project_id": project.id, "role_ids": [Teammate.EDITOR, Teammate.REVIEWER]}
 
-            response = test_client.post(f'/projects/{project.id}/add_teammate/', data=json.dumps(teammate_data), headers=Header.json)
+            response = test_client.post(f'/projects/{project.id}/teammates/', data=json.dumps(teammate_data), headers=Header.json)
             
             assert response.status_code == 401
 
@@ -31,9 +30,9 @@ class ProjectAddTeamWorkerTestCase(BaseTestCase):
             user = sign_in(test_client)
             project, response = request_create_project(test_client)
 
-            teammate_data = {"email": user.email, "project_id": project.id, "teammate_role_ids": [Teammates.get_role_id("Editor"), Teammates.get_role_id("Reviewer")]}
+            teammate_data = {"email": user.email, "project_id": project.id, "role_ids": [Teammate.EDITOR, Teammate.REVIEWER]}
 
-            response = test_client.post(f'/projects/{project.id}/add_teammate/', data=json.dumps(teammate_data), headers=Header.json)
+            response = test_client.post(f'/projects/{project.id}/teammates/', data=json.dumps(teammate_data), headers=Header.json)
 
             assert response.status_code == 201
 
@@ -44,9 +43,9 @@ class ProjectAddTeamWorkerTestCase(BaseTestCase):
             user = sign_in(test_client)
             project, response = request_create_project(test_client)
 
-            teammate_data = {"email": "asd", "project_id": project.id, "teammate_role_ids": [Teammates.get_role_id("Editor"), Teammates.get_role_id("Reviewer")]}
+            teammate_data = {"email": "asd", "project_id": project.id, "role_ids": [Teammate.EDITOR, Teammate.REVIEWER]}
 
-            response = test_client.post(f'/projects/{project.id}/add_teammate/', data=json.dumps(teammate_data), headers=Header.json)
+            response = test_client.post(f'/projects/{project.id}/teammates/', data=json.dumps(teammate_data), headers=Header.json)
 
             assert response.status_code == 400
     
@@ -60,9 +59,9 @@ class ProjectAddTeamWorkerTestCase(BaseTestCase):
 
             user = sign_in(test_client)
 
-            teammate_data = {"email": user.email, "project_id": project.id, "teammate_role_ids": [Teammates.get_role_id("Editor"), Teammates.get_role_id("Reviewer")]}
+            teammate_data = {"email": user.email, "project_id": project.id, "role_ids": [Teammate.EDITOR, Teammate.REVIEWER]}
 
-            response = test_client.post(f'/projects/{project.id}/add_teammate/', data=json.dumps(teammate_data), headers=Header.json)
+            response = test_client.post(f'/projects/{project.id}/teammates/', data=json.dumps(teammate_data), headers=Header.json)
 
             assert response.status_code == 400
 
@@ -72,8 +71,8 @@ class ProjectAddTeamWorkerTestCase(BaseTestCase):
 
             user = sign_in(test_client)
 
-            teammate_data = {"email": user.email, "project_id": "1", "teammate_role_ids": [Teammates.get_role_id("Editor"), Teammates.get_role_id("Reviewer")]}
+            teammate_data = {"email": user.email, "project_id": "1", "role_ids": [Teammate.EDITOR, Teammate.REVIEWER]}
 
-            response = test_client.post(f'/projects/1/add_teammate/', data=json.dumps(teammate_data), headers=Header.json)
+            response = test_client.post(f'/projects/1/teammates/', data=json.dumps(teammate_data), headers=Header.json)
 
             assert response.status_code == 404

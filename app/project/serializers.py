@@ -1,4 +1,5 @@
 from typing import List
+from inspect import getmembers, isroutine
 
 
 def serialize_project(project) -> dict:
@@ -7,16 +8,8 @@ def serialize_project(project) -> dict:
         'title': project.title,
         'description': project.description,
         'website': project.website,
-    }
-
-
-def serialize_project_with_count_likes(project) -> dict:
-    return {
-        'id': project.id,
-        'title': project.title,
-        'description': project.description,
-        'website': project.website,
-        'count_likes': project.count_likes if project.count_likes is not None else 0
+        'count_likes': (project.count_likes if project.count_likes is not None else 0) 
+            if "count_likes" in [attr[0] for attr in getmembers(project, lambda x: not(isroutine(x)))] else None,
     }
 
 
