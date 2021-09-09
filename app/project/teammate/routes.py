@@ -37,7 +37,7 @@ class Teammates(FlaskView):
     def delete(self, project : Project, validated_request : dict):
 
         user = User.query.get(validated_request.get('user_id'))
-        project.exclude_teammate(user.id)
+        project.delete_teammate(user.id)
 
         return jsonify(), 200
 

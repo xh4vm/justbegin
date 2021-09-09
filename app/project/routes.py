@@ -62,7 +62,7 @@ class Projects(FlaskView):
     @check_auth
     @project_required
     @project_authorship_required
-    @route('/<int:project_id>/delete/', methods=['DELETE'])
+    @route('/<int:project_id>/', methods=['DELETE'])
     def delete(self, project: Project):
 
         self.session.delete(project)

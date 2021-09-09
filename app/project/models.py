@@ -105,7 +105,7 @@ class Project(Model):
         
         self.session.commit()
 
-    def exclude_teammate(self, user_id : int) -> None:
+    def delete_teammate(self, user_id : int) -> None:
         Teammate.query.filter_by(user_id=user_id, project_id=self.id).delete()
         self.session.commit()
 
