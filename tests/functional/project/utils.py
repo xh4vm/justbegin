@@ -18,7 +18,7 @@ def request_create_project(client, title: str = None, description: str = None, w
         'website': f"{random_string()}.com",
     }
 
-    response = client.put('/projects/', data=project_data)
+    response = client.post('/projects/', data=project_data)
 
     if response.status_code >= 400:
         abort(response.status_code)
@@ -88,3 +88,6 @@ def create_project_follower(user_id: int = None, project_id: int = None) -> Proj
     db.session.commit()
 
     return follower
+
+def request_like_project(client, project_id : int):
+    return client.post(f'/projects/{project_id}/like/')

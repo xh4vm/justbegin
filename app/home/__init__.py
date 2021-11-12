@@ -1,5 +1,6 @@
 from flask import Blueprint
 
-bp = Blueprint('main', __name__)
+from .routes import Home
 
-from app.home import routes
+bp = Blueprint('main', __name__)
+Home.register(bp)

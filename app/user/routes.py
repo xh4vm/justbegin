@@ -18,4 +18,4 @@ class Users(FlaskView):
         user = User.query.filter_by(nickname=nickname).first()
 
         return jsonify({"user": serialize_user(user), 
-            "projects": list(map(serialize_project, user.projects_development))}), 200
+            "projects": list(map(serialize_project, user.projects))}), 200

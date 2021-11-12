@@ -1,36 +1,31 @@
-from .team.models import TeamWorker, WorkerRole
+from .teammate.models import Teammate
 from app.utils.request_type.Form import Form
 from app.utils.request_type import IRequestType
 from functools import wraps
-
-from flask import jsonify, request, abort
-
+from flask import abort
 from .comment.models import ProjectComment
 from .models import Project
-from .exceptions import ProjectExceptions
 from .story.models import ProjectStory
 from ..user.auth.utils import get_auth_instance
 
 
-def verify_project_authorship(req_type: IRequestType = Form):
-    def decorator(f):
-        @wraps(f)
-        def decorated_function(*args, **kwargs):
-            user_id, claims = get_auth_instance().get_current_user_data_from_token()
-            project_id = req_type().get().get('project_id')
-            admin_role = WorkerRole.get_admin()
+def project_authorship_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        user_id, claims = get_auth_instance().get_current_user_data_from_token()
 
-            if Project.query.get(project_id) is not None:
-                if TeamWorker.query \
-                    .filter_by(user_id=user_id, project_id=project_id, worker_role_id=admin_role.id) \
-                    .first() is None:
-                    return jsonify(ProjectExceptions.IS_NOT_PROJECT_ADMIN), 400
-            else:
-                return jsonify(ProjectExceptions.BAD_PROJECT_ID_DATA), 400
+        if 'project' not in kwargs:
+            abort(500)
 
-            return f(*args, **kwargs)
-        return decorated_function
-    return decorator
+        project = kwargs['project']
+
+        if Teammate.query \
+            .filter_by(user_id=user_id, project_id=project.id, role_id=Teammate.ADMIN) \
+            .first() is None:
+            abort(400)
+
+        return f(*args, **kwargs)
+    return decorated_function
 
 def project_required(f):
     @wraps(f)

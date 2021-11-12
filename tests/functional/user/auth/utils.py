@@ -49,7 +49,7 @@ def request_sign_up(client, first_name: str = None, last_name: str = None, nickn
         "confirm_password" : user_password if confirm_password is None else confirm_password,
         "telegram_nickname" : telegram_nickname or random_string()}
 
-    response = client.put('/users/auth/sign_up/', data=json.dumps(sign_up_data), headers=Header.json)
+    response = client.post('/users/auth/sign_up/', data=json.dumps(sign_up_data), headers=Header.json)
     user : User = User.query.filter_by(nickname=sign_up_data['nickname'], email=sign_up_data['email']).first()
 
     return user, response

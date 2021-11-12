@@ -1,31 +1,30 @@
-import json
 from tests.functional.user.auth.utils import request_logout, sign_in
-
-from app import db
 from app.project.models import Project
-from app.project.exceptions import ProjectExceptions
 from tests.functional.bases.base import BaseTestCase
 from tests.functional.project.utils import create_project, request_create_project
 
 
 class ProjectRemoveTestCase(BaseTestCase):
-    def test_remove_project_check_auth_fail(self):
+    def test_delete_project_check_auth_fail(self):
 
         with self.app.test_client() as test_client:
+            sign_in(test_client)
+            project = create_project()
+            request_logout(test_client)
 
-            response = test_client.delete('/projects/remove/')
+            response = test_client.delete(f'/projects/{project.id}/')
             assert response.status_code == 401
 
-    def test_remove_project_check_auth_success(self):
+    def test_delete_project_check_auth_success(self):
         
         with self.app.test_client() as test_client:
             sign_in(test_client)
             project, response = request_create_project(test_client)
         
-            response = test_client.delete('/projects/remove/', data={"project_id": project.id})
+            response = test_client.delete(f'/projects/{project.id}/')
             assert response.status_code == 200
 
-    def test_remove_project_success(self):
+    def test_delete_project_success(self):
         
         with self.app.test_client() as test_client:
             sign_in(test_client)
@@ -33,23 +32,21 @@ class ProjectRemoveTestCase(BaseTestCase):
         
             assert Project.query.get(project.id) is not None
 
-            response = test_client.delete('/projects/remove/', data={"project_id": project.id})
+            response = test_client.delete(f'/projects/{project.id}/')
 
             assert response.status_code == 200
-            assert json.loads(response.data.decode()) == {}
             assert Project.query.get(project.id) is None
 
-    def test_remove_project_bad_project_id_data(self):
+    def test_delete_project_bad_project_id_data(self):
         
         with self.app.test_client() as test_client:
             sign_in(test_client)
             project, response = request_create_project(test_client)
 
-            response = test_client.delete('/projects/remove/', data={"project_id": project.id + 1})
-            assert response.status_code == 400
-            assert json.loads(response.data) == ProjectExceptions.BAD_PROJECT_ID_DATA
+            response = test_client.delete(f'/projects/{project.id + 1}/')
+            assert response.status_code == 404
 
-    def test_remove_project_verify_authorship_fail(self):
+    def test_delete_project_verify_authorship_fail(self):
         
         with self.app.test_client() as test_client:
             sign_in(test_client)
@@ -58,6 +55,5 @@ class ProjectRemoveTestCase(BaseTestCase):
             request_logout(test_client)
             sign_in(test_client)
 
-            response = test_client.delete('/projects/remove/', data={"project_id": project.id})
+            response = test_client.delete(f'/projects/{project.id}/')
             assert response.status_code == 400
-            assert json.loads(response.data) == ProjectExceptions.IS_NOT_PROJECT_ADMIN

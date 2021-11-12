@@ -1,5 +1,4 @@
 from app.project.models import Project, create_author_project
-from app.project.team.models import WorkerRole
 from flask_testing import TestCase
 from sqlalchemy.orm.scoping import scoped_session
 
@@ -16,8 +15,6 @@ class BaseTestCase(TestCase):
         
     def setUp(self):  
         db.create_all()
-        db.session.add_all([
-            WorkerRole("Administrator"), WorkerRole("Developer"), WorkerRole("Manager")])
         db.session.commit()
 
     def tearDown(self): 

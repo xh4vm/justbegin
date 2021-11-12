@@ -4,11 +4,11 @@ from .methods import IAuth
 from datetime import datetime
 from werkzeug.exceptions import NotFound
 from app import db
-from app.decorators import request_is_json, request_validation_required
-from flask import json, render_template, jsonify, redirect, current_app
+from app.decorators import request_validation_required
+from flask import jsonify, redirect, current_app
 from flask_classy import FlaskView, route
 from .exceptions import AuthExceptions
-from ..decorators import already_auth, check_auth
+from ..decorators import already_auth
 from app.user.models import User
 from .utils import get_auth_instance
 from .schemas import post_user_schema, put_user_schema, post_reset_schema, put_reset_schema
@@ -25,7 +25,7 @@ class Auth(FlaskView):
         instance : IAuth = get_auth_instance()
         return instance.sign_in(email=validated_request.get("email"), password=validated_request.get("password"))
 
-    @route('/sign_up/', methods=["PUT"])
+    @route('/sign_up/', methods=["POST"])
     @request_validation_required(put_user_schema, JSON)
     @already_auth(response=AuthExceptions.ALREADY_AUTH, code=208)
     def sign_up(self, validated_request : dict):
